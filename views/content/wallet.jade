@@ -1,0 +1,34 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .container-fluid
+        .row
+            h3.col-md-6.col-md-offset-3.page-header 钱包
+        form#wallet(action='/wallet' method='POST')
+            .form-horizontal
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='balance') 余额
+                    .col-sm-6
+                        input#balance.form-control.required(type='text' placeholder='结余' name='balance' value='$' + user.balance.toFixed(2) disabled=true)
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='withdraw') 提现
+                    .col-sm-6
+                        input#withdraw.form-control.required(type='number' placeholder='$0.00' name='withdraw')
+                .form-group
+                    .col-md-6.col-sm-offset-3.col-sm-3
+                        span#message.text-primary= walletMessage
+                        button#submit.btn.btn-primary(style='float: right;' type='submit' disabled=true) 提交
+    script.
+        $(function () {
+            $('#withdraw').on('change', function () {
+                var balance = parseFloat('#{user.balance}');
+                if (this.value > balance) {
+                    this.value = balance.toFixed(2);
+                } else {
+                    if (this.value > 0) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                        $('#submit').attr('disabled', false);
+                    }
+                }
+            });
+        });

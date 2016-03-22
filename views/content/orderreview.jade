@@ -1,0 +1,103 @@
+extends ../layouts/master
+
+- var itemsExist = false;
+
+block content
+    .container-fluid
+        .col-md-6.col-md-offset-3
+            h3.page-header 订单总览
+        .col-md-6.col-md-offset-3
+            p
+                | 请确认您的订单
+            table.table
+                tbody
+                    each trip in trips
+                        if trip.carted && !trip.checked_out
+                            - itemsExist = true;
+                            tr
+                                td
+                                    br
+                                    .trip(id=trip.id)
+                                        strong= '名称： ' + trip.name
+                                    br
+                                    each day in trip.days
+                                        each waypoint in day
+                                            each destination in trip.destinations
+                                                if waypoint == destination.id
+                                                    p= destination.name + ' ' + (destination.minutes / 60).toFixed(1) + ' 小时'
+                                    p= '总行程时间 ' + (trip.minutes / 60).toFixed(1) + ' 小时'
+                                    p= '仅供参考：参加人数为 ' + trip.people + ' 人，每人支付 $' + (parseFloat(trip.estimate) / trip.people).toFixed(2)
+
+    if itemsExist
+        .shadedbg
+            .container-fluid
+                .col-md-6.col-md-offset-3
+                    h4.page-header
+                        | 退款政策
+                        small 中等:
+                    p
+                        | 如果72小时之前，退还全额定金。
+                        | 72小时之内取消行程，不可退还定金。
+                .col-md-6.col-md-offset-3
+                    h4.page-header= '总长度: ' + (total / 60).toFixed(1) + ' 小时 总额:  $' + (total * 2).toFixed(2) + ' 定金(20%): $' + (total * 2 * 0.2).toFixed(2)
+                    a.btn.btn-primary.back(href='/cart') 返回
+                    button.btn.btn-success#pay 下单
+    br
+    br
+    br
+    br
+    script.
+        $(function () {
+            $('#pay').on('click', function (e) {
+                var that = $(this);
+                var amount = (parseFloat('#{total}') * 2 * 0.2).toFixed(2).replace('.', '');
+                var total = (parseFloat('#{total}') * 2).toFixed(2).replace('.', '');
+
+                that.attr('disabled', false);
+                // Open Checkout with further options
+                var handler = StripeCheckout.configure({
+                    key: 'pk_test_3pykNl2uOMSk8iluOnXIpLCV',
+                    locale: 'zh',
+                    allowRememberMe: true,
+                    image: 'https://cdn4.iconfinder.com/data/icons/business-bicolor-2/512/donation-512.png',
+                    alipay: true,
+                    email: '#{user.email}',
+                    token: function (token) {
+                        var trips = [];
+
+                        $('.trip').each(function () {
+                            trips.push(this.id);
+                        });
+
+                        $.post('/checkout', {
+                            trips: trips,
+                            token: token.id,
+                            amount: amount,
+                            total: total
+                        }, function (result) {
+                            if (result.success) {
+                                window.location = '/confirm?o=' + result.order + '&s=true';
+                            } else {
+                                window.location = '/confirm?o=' + result.order + '&s=false';
+                            }
+
+                            that.attr('disabled', false);
+                        });
+                    }
+                });
+
+                handler.open({
+                    name: '存款',
+                    description: '选择付款方式。',
+                    amount: amount
+                });
+                e.preventDefault();
+            });
+
+            // Close Checkout on page navigation
+            $(window).on('popstate', function () {
+                handler.close();
+            });
+        });
+
+

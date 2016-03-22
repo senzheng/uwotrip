@@ -1,0 +1,263 @@
+@charset "UTF-8";
+/* CSS Document */
+
+html {
+	font-family: sans-serif;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	position: relative;
+	min-height: 100%
+}
+body {
+	margin: 0;
+	padding-bottom: 0px;
+	margin-bottom: 60px;
+	min-height: 100%;
+}
+
+
+/* Portal Left */
+
+#portal-left {
+	position: relative;
+	margin-top: -20px;
+	background-color: #595959;
+	height: 100vh;
+	bottom: 0px;
+	padding-right: 0px;
+}
+#portal-main {
+}
+#status {
+	background-color: #DCDCDC;
+}
+/* Navbar */
+
+.content {
+	position: relative;
+	top: 70px;
+    padding-left: 0px;
+}
+
+#unfinished ul{
+	padding-left: 25px;
+}
+
+#unfinished .fa {
+  float: right;
+  padding-right: 5px;
+}
+
+
+#unfinished li {
+	padding-top: 5px;
+	height: 30px;
+	border-bottom: 1px solid black;
+}
+
+.glyphicon {
+	font-size: xx-large;
+}
+
+.reviewupload{
+	width: 100%;
+	height: 200px;
+}
+
+form input:nth-child(2) {
+	position: relative;
+	margin-bottom: 10px;
+  
+}
+
+form input:nth-child(5) {
+	padding-left:0;
+	padding-top:0;
+	padding-bottom:0.4em;
+	padding-right: 0.4em;
+}
+
+form input:nth-child(7) {
+	top:10px;
+	position: relative;
+	left:70%;
+    background-color:#2fb62f;
+    border:0px; 
+  
+}
+
+
+.
+.reviewtitle p:nth-child(1) {
+	border-bottom: 1px solid grey;
+}
+
+#unfinished li:hover{
+	cursor: pointer;
+}
+
+.navbar-inverse {
+	background-color: #9CBFDB;
+	color: #fff;
+	border: none;
+}
+.navbar-inverse .navbar-nav > li > a {
+	color: #eee;
+}
+.navbar-inverse .navbar-brand {
+	color: #eee;
+}
+.navbar-form .form-control {
+	border: #fff solid 1px;
+}
+.navbar .btn-default {
+	border: #fff 1px solid;
+}
+#order-buttons {
+	float: right;
+}
+.btn-primary {
+	background: #9CBFDB;
+	border-color: #9CBFDB;
+}
+.btn-grey {
+	background: #ddd;
+	margin-right: 2px;
+}
+/*--Portal Left Bar--*/
+
+#port-left {
+	color: #333;
+}
+#portal-left a {
+	color: #b3b3b3;
+	text-decoration: none;
+}
+
+.menulist li a{
+	 border: 0px;
+}
+
+.menulist ul li:hover{
+     background-color: white;
+}
+
+.menulist li a:hover{
+	 border: 0px;
+}
+
+.nav-tabs > li.active > a {
+	border:0px;
+}
+
+.menulist {
+	border-bottom: 1px solid #ddd;
+}
+
+
+#portal-left a:hover, #portal-left a:focus {
+	color: black;
+	text-decoration: none;
+
+}
+#portal-left a:focus {
+}
+/* -----------------------   Sticky footer  -----------------------  */
+
+.footer a {
+	color: #ffffff
+}
+.footer {
+	position: absolute;
+	bottom: 0;
+	font-size: small;
+	width: 100%;
+	min-height: 63px;
+	background-color: rgba(0, 0, 0, 0.6);
+	margin-right: -15px;
+	margin-left: -15px
+}
+.footer-fixed-home {
+	position: fixed;
+	bottom: 0;
+	font-size: small;
+	width: 100%;
+	height: 63px;
+	background-color: rgba(0, 0, 0, 0.7);
+	margin-right: -15px;
+	margin-left: -15px;
+}
+.container {
+	width: 100%
+}
+.container .text-muted {
+	color: #dddddd;
+	margin: 20px 0
+}
+.footer img {
+	float: left
+}
+.social-icon {
+	margin-right: 10px
+}
+/*
+Footer
+ */
+
+ .navigation ul {
+ 	list-style-type: none;
+ 	padding-left: 10px;
+ }
+
+ .navigation ul li {
+ 	padding-top: 7px;
+ 	padding-left: 10px;
+ 	display: block;
+ }
+
+ 
+
+.active {
+ 	background-color: white;
+ 	color: black;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+ }
+
+ .navigation ul li a{
+   color : white;
+
+ }
+
+.reviewdetails {
+   margin-top: 10px;
+}
+
+.userpic2 {
+    margin-top: 30px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	float: left;
+    width: 150px;
+	height: 150px;
+}
+.userpic2 img {
+	border-radius: 50%;
+    border: 1px solid #979797;
+    width: 100%;
+    height: 100%;
+}
+
+.mastfoot {
+	color: #999;
+	/* IE8 proofing */
+	color: rgba(255, 255, 255, 0.5);
+	text-align: center;
+}
+
+@media screen and (max-width: 991px) {
+#portal-left {
+	height: auto;
+	padding-right: 0px;
+}
+}

@@ -1,0 +1,108 @@
+.row.places-wrapperTemp
+            each result in results
+                - var tagId = 'detail-' + result._id
+                .detail(id=tagId, style='display: none')
+                    button.close-btn X
+                    if result.media_id.photos.length
+                        .carousel.slide(data-ride='carousel', id="carousel-place-detail")
+                            .carousel-inner(role='listbox')
+                                each photo, i in result.media_id.photos
+                                    a.item.magnific-popup-item(class=i == 0 ? 'active' : '', rel="place-gallery",href=result.media_id.photos[i], title="")
+                                        .uwo_image_carousel(style="background:url("+result.media_id.photos[i]+") no-repeat center center; height:36em;")
+
+                            if result.media_id.photos.length > 1
+                                each photo, i in result.media_id.photos
+                                    ol.carousel-indicators
+                                        li(data-target="#carousel-place-detail", data-slide-to=i, class=i == 0 ? 'active' : '')
+                    .container-fluid.popup-detail
+                        .col-md-5
+                            .col-md-12.col-sm-6.col-xs-6
+                                h3= result.title['cn'] || result.title['en']
+                                table.table
+                                    tbody
+                                        col(width='75px')
+                                        if result.address
+                                            tr
+                                                td 地址
+                                                td= result.address
+                                        if result.attractions
+                                            tr
+                                                td 景点介绍
+                                                td= result.attractions
+                                        if result.phone
+                                            tr
+                                                td 手机号码
+                                                td= result.phone
+                                        if result.website
+                                            tr
+                                                td 网站
+                                                td
+                                                    a(href=result.website)= result.website
+                                        if result.minutes
+                                            tr
+                                                td 分钟
+                                                td= result.minutes
+                                        if result.admission
+                                            tr
+                                                td 价格
+                                                td= result.admission
+                                        if result.owner && result.owner.id != user.id && !user.is_guide
+                                            tr
+                                                td 联系
+                                                td
+                                                    a.btn.btn-primary(style='width: 100%;' href='/messages/' + result.owner.id)= result.owner.username
+                                        else if !result.owner && user && !user.is_guide
+                                            tr
+                                                td 联系
+                                                td
+                                                    form(action='/gethelp' method='POST')
+                                                        input(type='hidden' name='result' value=result.title['cn'] || result.title['en'])
+                                                        button.btn.btn-primary(type='submit' style='width: 100%;') 得到帮助
+                                if user && !user.is_guide && !user.is_admin
+                                    .text-center
+                                        a.btn.btn-primary.add-btn(data-pid=result.id)= '添加景点'
+                                br
+                                br
+                        .col-md-7
+                            if result.introduction
+                                h4 介绍
+                                p= result.introduction
+                            if result.description
+                                h4 描述
+                                p= result.description
+                .col-md-4.col-sm-4.nopadding
+                    if mode == 'destination'
+                        .thumbnail
+                            // img.add-to-cart(src='/img/icons/add-to-cart.png' height="15%" width="15%")
+                            if user && !user.is_guide && !user.is_admin
+                            // a(style="background:url('/img/icons/add-to-cart.png') no-repeat; " data-pid=result.id)
+                            a.add-to-cart-icon(data-pid=result.id)
+                                img(src='/img/icons/add-to-cart.png' )
+                                i.fa.fa-spinner.fa-spin.loading-indicator
+                            a.add-to-cart-info(data-pid=result.id)
+                                i.fa.fa-info-circle.fa-lg
+                            a.preview-img(href='/destination/' + result.id, style="background: url("+ result.media_id.photos[0] +") no-repeat center center; ")
+                            .caption
+                                div.text-left
+                                    a.thumb-title(href='/destination/' + result.id)=result.title['cn'] || result.title['en']
+                                    div.thumb-description= result.description ? result.description.substr(0, 50) + '...' : ''
+                                    if user && !user.is_guide && !user.is_admin
+                                        // a.btn.btn-primary.add-btn(data-pid=result.id) 添加景点
+                            .preview-content
+                                .fit-size
+                                .preview-content-description
+                                    h4=result.title['cn'] || result.title['en']
+                                    div.preview-detail=result.description
+                    else
+                        .thumbnail
+                            .preview-img(href='/guide/' + result.id, style="background: url("+ result.media_id.photos[0] +") no-repeat center center; ")
+                            .caption
+                                p.text-left
+                                    a(href='/guide/' + result.id)= result.username
+                                    div= result.description ? result.description.substr(0, 50) + '...' : ''
+                            .preview-content
+                                .fit-size
+                                .preview-content-description
+                                    h4=result.title['cn'] || result.title['en']
+                                    div.preview-detail=result.description
+           

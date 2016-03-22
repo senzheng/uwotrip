@@ -1,0 +1,73 @@
+extends ../layouts/dashboard
+
+- var itemsExist = false;
+
+block dashboard
+    #delete_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='deletetrip')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                form(action='/myplaces/delete' method='POST' name='deletetrip')
+                    .modal-header
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                        h4.modal-title 确认删除
+                    .modal-body
+                        | 你确定你要删除？
+                    .modal-footer
+                        button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                        a.btn.btn-primary#deletetrip(type='submit') 删除
+    .col-md-10.col-md-offset-1
+        h3 我的路线
+        a.btn.btn-success(href='/myplaces' style='margin-bottom:10px;') 创建更多的路线
+        table.table
+            tr
+                th(width='20%') 旅程名称
+                th 总长度
+                th 景点数量
+                th 预估价格
+                th
+            each trip, i in trips
+                if !trip.carted && !trip.checked_out
+                    - itemsExist = true;
+                    tr
+                        td
+                            if trip.generated
+                                a(href='/mytrips/trip/' + trip.id)= trip.name
+                            else
+                                p= '默认'
+                        td= trip.generated ? (trip.minutes / 60).toFixed(1) + ' 小时' : 'N/A'
+                        td= trip.destinations.length
+                        td= trip.generated ? '$' + (trip.minutes * 2).toFixed(2) : 'N/A'
+                        td
+                            if !trip.generated
+                                a.btn.btn-sm.btn-primary(href=(trip.generated ? '#' : ('/mytrips/generate/' + trip.id)) disabled=trip.generated) 生成路由
+                            a.btn.btn-sm.btn-warning(href=(trip.generated ? ('/plan/' + trip.id) : '#') disabled=!trip.generated) 旅程计划
+                            button.btn.btn-sm.btn-success.add_cart(id=trip.id disabled=!trip.generated) 加入购物车
+                            button.btn.btn-sm.btn-danger.delete-trip(data-toggle='modal' data-target='#delete_popup' data-delete='/mytrips/delete/' + trip.id + '?r=/mytrips') 清除
+            if !itemsExist
+                tr
+                    td
+                    td
+                    td
+                    td
+                    td
+    script.
+        $(function () {
+            $('.delete-trip').click(function () {
+                $('#deletetrip').attr('href', $(this).data('delete'));
+            });
+
+            $('.add_cart').click(function () {
+                var that = $(this);
+
+                that.attr('disabled', true);
+
+                $.post('/cart/add', {tid: that.attr('id')}, function (result) {
+                    if (result.success) {
+                        window.location = '/cart';
+                    }
+
+                    that.attr('disabled', false);
+                });
+            });
+        });

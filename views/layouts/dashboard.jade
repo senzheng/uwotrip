@@ -1,0 +1,107 @@
+extends master
+
+block content
+    #wrapper
+        .overlay
+            div.splash
+            button.logout(type='button')
+        nav#sidebar-wrapper.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+            ul.nav.sidebar-nav
+                li.sidebar-brand
+                if user.is_tourist
+                    li
+
+                li
+                    a(href='/myreview')
+                        |  Review
+                if !user.is_admin
+                    li
+                        a(href='/myOrder')
+                            |  Order
+                if !user.is_guide && !user.is_admin
+                    li
+                        a(href='/myplaces')
+                            |  MyPlace
+                    li
+                        a(href='/cart')
+                            |  Cart
+                    li
+                        a(href='/operator/faq')
+                            |  Introduction
+                li
+                    a(href='/messages')
+                        |  Chat
+                li
+                    a(href='/notifications')
+                        |  News
+                if user.is_guide
+                    li
+                        a(href='/wallet')
+                            |  Wallet
+                    li
+                        a(href='/destination/manage')
+                            |  Place Management
+                if user.is_admin
+                    li
+                        a(href='/assignorders')
+                            |  分配到位
+                    li
+                        a(href='/assignhelp')
+                            |  分配帮助
+                    li
+                        a(href='/approvedestinations')
+                            |  批准的地方
+                    li
+                        a(href='/approveguides')
+                            |  Guide
+                    li
+                        a(href='/feedbacks')
+                            |  Feedback
+                    li
+                        a(href='/account/create')
+                            |  Create Account
+                    //li
+                        a(href='/disputes')
+                            |  Argument
+                    //li
+                        a(href='/payguides')
+                            |  Salary
+                    //li
+                        a(href='/transactions')
+                            |  Transaction History
+                li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                        |  Configuration
+                        span.caret
+                    ul.dropdown-menu(role='menu')
+                        li.dropdown-header Account
+                        li
+                            a(href='/profile') Profile
+                        li
+                            a(href='/changepassword') Password
+                        if user.is_guide
+                            li
+                                a(href='/guide/' + user.id) Public Info
+                li
+                    a(href='/logout')
+                        |  Logout
+                li
+                li
+                li
+                li
+                li
+        
+            span.hamb-top
+            span.hamb-middle
+            span.hamb-bottom
+        .container#page-content-wrapper
+            .shadow
+                #dashboard
+                    .container-fluid
+                        if !user.waiting_approval
+                            block dashboard
+                        else
+                            br
+                            br
+                            .text-danger.text-center 正在等待批准。
+    script(src='/js/dashboard.js')

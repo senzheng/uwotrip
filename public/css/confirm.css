@@ -1,0 +1,15 @@
+.confirm {
+	width: 400px;
+	padding-top: 40px;
+	height: 100px;
+	margin: 0 auto;
+	background-color: #9BCDA0;
+	color: white;
+}
+
+.confirm div{
+	width: 300px;
+	height: 40px;
+	font-size: 120%;
+	margin: 0 auto;
+}

@@ -1,0 +1,99 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .col-md-5.col-md-offset-1
+        .text-center(style='font-size: 32px; font-weight: 600;')= '旅游名称：' + trip.name
+        .row
+            #gmap-route(style='height: 380px;')
+                h2
+                    | 距离
+                    strong#mi
+            #route(style='margin-bottom: 50px; top: 40px; position: relative;')
+    .col-md-5
+
+        span(style='margin-top:30px; height:100%; width:3px; background-color:#ddd; position:absolute; margin-left: 10px; z-index: -50;')
+
+        each day, i in trip.days
+            div(style='background-color:#1081DD; font-size:20px; margin-top:10px; color:white; margin-bottom:10px;')= '第' + (i + 1) + '天'
+            each waypoint in day
+                each destination in trip.destinations
+                    if waypoint.destination_id == destination.id
+                        .panel.panel-default(style='border:1px solid #ddd; margin-bottom:10px; padding:10px;')
+                            if destination.destination_id
+                                .text-center
+                                    img(style='height:100%; width:auto;', src=destination.destination_id.media_id.photos[0])
+                            br
+                            div(style='font-size:20px;')= destination.name
+                            div(style='max-height:100px; overflow:hidden; text-overflow: ellipsis;')= (destination.destination_id ? '描述：' + destination.destination_id.description : '')
+                            hr
+                            p= '长度: ' + (destination.minutes / 60).toFixed(1) + ' 小时'
+                            p= '地址: '
+                                span.address= destination.address
+                            p= waypoint.travel
+                            p= '开始时间: '
+                                span.display-date= destination.start_time
+                            p= '结束时间: '
+                                span.display-date= destination.end_time
+                            p= '参考：参加人数为' + destination.people + '人，每人需支付: $' + ((destination.minutes * 2) / destination.people).toFixed(2)
+        p
+            span(style='border:1px solid #ddd; font-size:15px; padding:5px; background-color:#ddd;') 结束
+        br
+        div(style='margin-left: 20px;')
+            a.btn.btn-default(href=user.is_admin? '/assignorders' : back) 返回
+            button#print.btn.btn-info 打印此页
+                i.fa.fa-print(style='margin-left: 5px;')
+        br
+        br
+    script.
+        $(function () {
+
+            var googleGeocoder = new GeocoderJS.createGeocoder({
+                'provider': 'google'
+            });
+
+            var LocsD = [];
+
+            var addresses = [];
+
+            $('.address').each(function () {
+                addresses.push($(this).text());
+            });
+
+            var geocodeAddresses = function (addresses) {
+                googleGeocoder.geocode(addresses[0], function (result) {
+
+                    LocsD.push({
+                        lat: result[0].latitude,
+                        lon: result[0].longitude,
+                        title: '',
+                        html: '',
+                        stopover: true
+                    });
+
+                    addresses = addresses.splice(1, addresses.length - 1);
+
+                    if (addresses.length) {
+                        geocodeAddresses(addresses);
+                    } else {
+                        new Maplace({
+                            locations: LocsD,
+                            map_div: '#gmap-route',
+                            generate_controls: false,
+                            show_markers: false,
+                            type: 'directions',
+                            draggable: true,
+                            directions_panel: '#route',
+                            afterRoute: function (distance) {
+                                $('#mi').text(': ' + ((distance / 1000) * .6214).toFixed(2) + ' 英里');
+                            }
+                        }).Load();
+                    }
+                });
+            };
+
+            geocodeAddresses(addresses);
+
+            $('#print').click(function () {
+                window.print();
+            });
+        });

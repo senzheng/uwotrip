@@ -1,0 +1,181 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .container-fluid
+        .row
+            h3.col-md-6.col-md-offset-3.page-header 您的目的地
+        form#destinationform(action=action method='POST')
+            .form-horizontal
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='title') 标题
+                    .col-sm-6
+                        input#title.form-control.required(type='text' placeholder='标题' name='title' value=destination ? destination.title['cn'] : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='introduction') 介绍
+                    .col-sm-6
+                        input#introduction.form-control.required(type='text' placeholder='介绍' name='introduction' value=destination ? destination.introduction : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='descriptiontext') 描述
+                    .col-sm-6
+                        textarea#descriptiontext.form-control(style='resize: none; width: 100%; height: 120px;' name='descriptiontext' placeholder='描述')= destination ? destination.description : ''
+                        input#description.form-control(type='hidden' name='description' value=destination ? destination.description : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='address') 地址
+                    .col-sm-6
+                        input#address.form-control.required(type='text' placeholder='地址' name='address' value=destination ? destination.address : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='minutes') 分钟
+                    .col-sm-6
+                        input#minutes.form-control.required(type='number' placeholder='分钟' name='minutes' min=90 value=destination ? destination.minutes : '90')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='phone') 电话
+                    .col-sm-6
+                        input#phone.form-control.required(type='number' placeholder='电话' name='phone' value=destination ? destination.phone : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='website') 网站
+                    .col-sm-6
+                        input#website.form-control.required(type='text' placeholder='http://www.example.com' name='website' value=destination ? destination.website : '')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='photo') 上传图片
+                    .col-sm-8
+                        span(style='display: inline-block;')
+                            img#preview(src=destination && destination.media_id.photos && destination.media_id.photos[0] ? destination.media_id.photos[0] : 'http://officialbrittneyalger.com/wp-content/uploads/2014/10/img-placeholder-dark.jpg' style='width: 200px; height: 200px;')
+                            input#photoUploader(type='file' accept='image/*' onchange='previewFile(event)')
+                            input#photo(type='hidden' name='photo1' value=destination && destination.media_id.photos && destination.media_id.photos[0] ? destination.media_id.photos[0] : '')
+                        span(style='display: inline-block;')
+                            img#preview(src=destination && destination.media_id.photos && destination.media_id.photos[1] ? destination.media_id.photos[1] : 'http://officialbrittneyalger.com/wp-content/uploads/2014/10/img-placeholder-dark.jpg' style='width: 200px; height: 200px;')
+                            input#photoUploader(type='file' accept='image/*' onchange='previewFile(event)')
+                            input#photo(type='hidden' name='photo2' value=destination && destination.media_id.photos && destination.media_id.photos[1] ? destination.media_id.photos[1] : '')
+                        br
+                        span(style='display: inline-block;')
+                            img#preview(src=destination && destination.media_id.photos && destination.media_id.photos[2] ? destination.media_id.photos[2] : 'http://officialbrittneyalger.com/wp-content/uploads/2014/10/img-placeholder-dark.jpg' style='width: 200px; height: 200px;')
+                            input#photoUploader(type='file' accept='image/*' onchange='previewFile(event)')
+                            input#photo(type='hidden' name='photo3' value=destination && destination.media_id.photos && destination.media_id.photos[2] ? destination.media_id.photos[2] : '')
+                        span(style='display: inline-block;')
+                            img#preview(src=destination && destination.media_id.photos && destination.media_id.photos[3] ? destination.media_id.photos[3] : 'http://officialbrittneyalger.com/wp-content/uploads/2014/10/img-placeholder-dark.jpg' style='width: 200px; height: 200px;')
+                            input#photoUploader(type='file' accept='image/*' onchange='previewFile(event)')
+                            input#photo(type='hidden' name='photo4' value=destination && destination.media_id.photos && destination.media_id.photos[3] ? destination.media_id.photos[3] : '')
+                .form-group
+                    .col-md-6.col-sm-offset-3.col-sm-3.text-right
+                        input#id(type='hidden' value=destination ? destination.id : '' name='id')
+                        span#message.text-primary
+                        a.btn.btn-default(href='/destination/manage') 回去
+                        button#submit.btn.btn-primary(type='submit') 提交
+    script.
+        $(function () {
+            $('#descriptiontext').on('input', function () {
+                $('#description').val(this.value);
+            });
+
+            $('#destinationform').validate({
+                rules: {
+                    title: {
+                        required: true,
+                        minlength: 3
+                    },
+                    introduction: {
+                        required: true,
+                        minlength: 3
+                    },
+                    descriptiontext: {
+                        required: true,
+                        minlength: 10
+                    },
+                    address: {
+                        required: true,
+                        minlength: 3
+                    },
+                    phone: {
+                        digits: true,
+                        minlength: 10
+                    },
+                    website: {
+                        required: false,
+                        url: true
+                    },
+                    minutes: {
+                        required: true,
+                        digits: true,
+                        min: 90
+                    },
+                    photo1: {
+                        accept: 'image/*'
+                    },
+                    photo2: {
+                        accept: 'image/*'
+                    },
+                    photo3: {
+                        accept: 'image/*'
+                    },
+                    photo4: {
+                        accept: 'image/*'
+                    }
+                },
+                messages: {
+                    title: {
+                        required: '标题是必需的。',
+                        minlength: '标题太短。'
+                    },
+                    introduction: {
+                        required: '简介消息太短。',
+                        minlength: '姓氏不够长。'
+                    },
+                    descriptiontext: {
+                        required: '说明是必需的。',
+                        minlength: '说明太短。'
+                    },
+                    address: {
+                        required: '地址是必需的。',
+                        minlength: '地址太短。'
+                    },
+                    phone: {
+                        digits: '手机只能有数字。',
+                        minlength: '手机太短。'
+                    },
+                    website: {
+                        url: '进入网站链接。'
+                    },
+                    minutes: {
+                        required: '输入行程时间。',
+                        digits: '只有数字。',
+                        min: '数字太短。'
+                    },
+                    photo1: {
+                        accept: '仅适用于图像。'
+                    },
+                    photo2: {
+                        accept: '仅适用于图像。'
+                    },
+                    photo3: {
+                        accept: '仅适用于图像。'
+                    },
+                    photo4: {
+                        accept: '仅适用于图像。'
+                    }
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass('has-error');
+                },
+                errorElement: 'span',
+                errorClass: 'help-block',
+                errorPlacement: function (error, element) {
+                    if (element.parent('.input-group').length) {
+                        error.insertAfter(element.parent());
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $('#submit').on('click', function (event) {
+                if ($('#destinationform').valid()) {
+                    $(this).submit();
+                    return true;
+                }
+
+                return false;
+            });
+        });

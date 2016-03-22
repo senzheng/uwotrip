@@ -1,0 +1,34 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .row
+        .col-md-6.col-md-offset-3
+            .panel.panel-default
+                .panel-heading
+                    h3 行程取消
+                .panel-body
+                    p 您的取消我们感到很遗憾，如果您不介意的话，可否告诉我们为什么您要取消这趟行程呢？
+                    select.form-control
+                        option 我改变主意了
+                        option 我不喜欢这个向导
+                    .text-center
+                        br
+                        |  订单号码: #2342342
+                        br
+                        |  BBBB TRIP
+                        br
+                        |  总支付: $180
+                    br
+                    .pull-right
+                        button.btn.btn-primary(type='button') 继续
+                        button.btn.btn-default(type='button') 返回
+
+    .row
+        .col-md-6.col-md-offset-3
+            .panel.panel-default
+                .panel-heading
+                    h3 行程取消
+                .panel-body
+                    p 行程取消成功，您的退款将会在最多20天内退回到您的之前支付所用的账户里（根据所在银行/支付工具会有所不同）。
+                    .pull-right
+                        button.btn.btn-default(type='button') 返回

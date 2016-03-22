@@ -1,0 +1,244 @@
+body {
+	width: 100%;
+	height: 100%;
+}
+
+.container-fluid{
+	margin: 0px;
+	padding: 0px;
+}
+
+.content {
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+}
+
+.slider {
+	width: 100%;
+	height: 400px;
+}
+
+.slider img {
+	width: 100%;
+	height: 100%;
+}
+
+.profile {
+	width: 800px;
+	height: 400px;
+	margin: 0 auto;
+}
+
+.left {
+	background-color: #EBEBEB;
+	height: 100%;
+}
+
+.right {
+	height: 400px;
+}
+
+.userpic2 {
+	margin: 0 auto;
+    margin-top: -60px;
+	margin-left: 35%;
+	float: left;
+    width: 120px;
+	height: 120px;
+}
+.userpic2 img {
+	border-radius: 50%;
+    border: 1px solid #979797;
+    width: 100%;
+    height: 100%;
+}
+
+.name {
+	position: relative;
+	width: 100%;
+	top:20px;
+	float: left;
+	padding-left: 45%;
+	font-size: 120%;
+	font-weight: 500;
+}
+
+.rating {
+	position: relative;
+	width: 100%;
+	top: 20px;
+	height: 20px;
+	float: left;
+	padding-left: 30%;
+
+}
+
+.reviewamount {
+	padding-left: 5px;
+	font-size: 90%;
+	font-weight: 400;
+	color:#C4C4C3;
+}
+
+.intro {
+	font-size: 60%;
+	position: relative;
+	width: 100%;
+	float: left;
+	text-align: center;
+	top:20px;
+}
+
+.intro p {
+	top: 20px;
+	font-size: 130%;
+	font-weight: 400;
+}
+
+
+
+.icon {
+	top: 15px;
+	left: 15px;
+	height: 35px;
+	width: 100%;
+	position: relative;
+	margin-right: 0px;
+	
+}
+
+.icon-left{
+	border-radius: 50%;
+    border: 1px solid #979797;
+    width: 35px;
+    height: 100%;
+    float: left;
+    margin-right: 10px;
+    display: inline-block;
+    background-color: grey;
+    padding: 6px 5px 5px 5px;
+    text-align: center;
+    color:white;
+}
+
+.icon-right {
+	border-radius: 50%;
+    border: 1px solid #979797;
+    width: 35px;
+    height: 100%;
+    float: left;
+    display: inline-block;
+    background-color: #9BCDA0 ;
+    padding: 5px 5px 5px 5px;
+     text-align: center;
+    color: white;
+}
+
+.glyphicon-star {
+	color: #e67300;
+}
+
+.userpic {
+	top: 5px;
+	margin: 0 auto;
+	margin-left: 35%;
+	float: left;
+    width: 65px;
+	height: 65px;
+}
+.userpic img {
+	border-radius: 50%;
+    border: 1px solid #979797;
+    width: 100%;
+    height: 100%;
+}
+
+.contentwo {
+	position: relative;
+	float: left;
+	height: 100px;
+	width: 400px;
+	font-size: 110%;
+	color: #8c8c8c;
+	text-align: center;
+	top: 40px;
+	display: block;
+	white-space: pre-wrap;
+	overflow: scroll;
+	text-align: left;
+	font-size: 90%;
+    font-weight: 300;
+	line-height: 15px;
+}
+
+.reviews {
+	position: relative;
+	float: left;
+	width: 100%;
+	top: 70px;
+	text-align: left;
+}
+
+.row {
+	border-bottom: 1px solid grey;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.pangination {
+	font-size: 90%;
+	font-weight: 500;
+	color: grey;
+	padding-left: 5px;
+	height: 30px;
+    width: 100%;
+	border-bottom: 1px solid grey;
+}
+
+.pangination ul{
+    list-style-type: none;
+    float: right;
+}
+
+.pangination ul li {
+	 display: inline;
+}
+
+.pangination ul li button{
+	font-size: 70%;
+	border: 0px;
+}
+
+.pangination ul li button:hover{
+	background-color: #B7CDEA;
+}
+
+.row {
+	padding-top: 10px;
+}
+
+.row ul{
+   list-style-type: none;
+}
+
+.row span {
+	padding-right: 10px;
+}
+
+.row ul li:first-child{
+	font-size: 90%;
+	font-weight: 600;
+}
+
+.row ul li:nth-child(2){
+	font-size: 80%;
+	font-weight: 500;
+
+}
+
+.row ul li:last-child{
+	white-space: pre-wrap;
+	font-size: 80%;
+	font-weight: 400;
+}

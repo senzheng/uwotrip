@@ -1,0 +1,76 @@
+extends ../layouts/master
+
+block content
+    if destination.media_id.photos.length
+        #carousel-example-generic.carousel.slide(data-ride='carousel')
+            .carousel-inner(role='listbox')
+                each photo, i in destination.media_id.photos
+                    .item.magnific-popup-item(class=i == 0 ? 'active' : '', rel="gallery1",href=destination.media_id.photos[i], title=destination.title['cn'] || destination.title['en'])
+                        // img(src=photo)
+                        .uwo_image_carousel(style="background:url("+destination.media_id.photos[i]+") no-repeat center center; height:36em;")
+                        .carousel-caption
+                            //description of photo
+            a.left.carousel-control(href='#carousel-example-generic', role='button', data-slide='prev')
+                span.fa.fa-arrow-left(aria-hidden='true')
+                span.sr-only Previous
+            a.right.carousel-control(href='#carousel-example-generic', role='button', data-slide='next')
+                span.fa.fa-arrow-right(aria-hidden='true')
+                span.sr-only Next
+    .container-fluid
+        .col-md-3.col-md-offset-2
+            .col-md-12.col-sm-6.col-xs-6
+                h3= destination.title['cn'] || destination.title['en']
+                table.table
+                    tbody
+                        col(width='75px')
+                        if destination.address
+                            tr
+                                td 地址
+                                td= destination.address
+                        if destination.attractions
+                            tr
+                                td 景点介绍
+                                td= destination.attractions
+                        if destination.phone
+                            tr
+                                td 手机号码
+                                td= destination.phone
+                        if destination.website
+                            tr
+                                td 网站
+                                td
+                                    a(href=destination.website)= destination.website
+                        if destination.minutes
+                            tr
+                                td 分钟
+                                td= destination.minutes
+                        if destination.admission
+                            tr
+                                td 价格
+                                td= destination.admission
+                        if destination.owner && destination.owner.id != user.id && !user.is_guide
+                            tr
+                                td 联系
+                                td
+                                    a.btn.btn-primary(style='width: 100%;' href='/messages/' + destination.owner.id)= destination.owner.username
+                        else if !destination.owner && user && !user.is_guide
+                            tr
+                                td 联系
+                                td
+                                    form(action='/gethelp' method='POST')
+                                        input(type='hidden' name='destination' value=destination.title['cn'] || destination.title['en'])
+                                        button.btn.btn-primary(type='submit' style='width: 100%;') 得到帮助
+                if user && !user.is_guide && !user.is_admin
+                    .text-center
+                        a.btn.btn-primary.add-btn(data-pid=destination.id)= '添加景点'
+                br
+                br
+        .col-md-5
+            if destination.introduction
+                h4 介绍
+                p= destination.introduction
+            if destination.description
+                h4 描述
+                p= destination.description
+    br
+    iframe(src='https://www.google.com/maps?&output=embed&q=' + destination.address, width='100%', height='300px', frameborder='0', style='border:0; margin-bottom: 55px;', allowfullscreen='')

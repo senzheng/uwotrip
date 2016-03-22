@@ -1,0 +1,14 @@
+extends ../layouts/master
+
+block content
+    .col-md-6.col-md-offset-3(style='margin-top:50px;text-align:center;')
+        h1
+            i.fa.fa-frown-o(style='font-size:100px;color:#ccc;')
+        h2 我们有一些问题。
+        p
+            | 我们无法找到你要的页面
+            a(href='/')= ' myuwotrip.com'
+            br
+            | 随意点击后退按钮，或者你可以尝试，并从主页再次启动
+        button.btn.btn-grey(onclick='javascript:history.back()') 背部
+        a.btn.btn-primary(href='/') 游蜗旅行

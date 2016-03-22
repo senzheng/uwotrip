@@ -1,0 +1,54 @@
+extends ../layouts/dashboard
+
+block dashboard
+    table.table
+        h2 批准旅行
+        br
+        tbody
+            tr
+                th 标题
+                th 介绍
+                th 描述
+                th 地址
+                th 分钟
+                th 电话
+                th 网站
+                th 发布日期
+                th 所有者
+                th
+                if destinations.length
+                    each destination in destinations
+                        tr
+                            td
+                                a(href='/destination/' + destination.id)= destination.title['cn'] || destination.title['en']
+                            td= destination.introduction
+                            td= destination.description
+                            td
+                                a(href='https://www.google.com/maps/place/' + destination.address)= destination.address
+                            td= destination.minutes
+                            td= destination.phone
+                            td
+                                a(href=destination.website)= destination.website
+                            td.display-date= destination.post_date
+                            td
+                                a(href='/guide/' + destination.owner.id)= destination.owner.username
+                            td
+                                form(action='/approvedestinations' method='POST')
+                                    input(type='hidden' name='id' value=destination.id)
+                                    button.btn.btn-success(type='submit') 批准
+                else
+                    th
+                    tr
+                        td
+                        td
+                        td
+                        td
+                        td
+                        td
+                            br
+                            .text-danger.text-center 没有未决目的地。
+                        td
+                        td
+                        td
+                        td
+                        td

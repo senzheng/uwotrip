@@ -1,0 +1,70 @@
+extends ../../layouts/dashboard
+
+block dashboard
+    .container-fluid
+        .row
+            h3.col-md-6.col-md-offset-3.page-header Create Account
+        form#profile(action='/account/create' method='POST')
+            .form-horizontal
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='username') Username
+                    .col-sm-8
+                        input#username.form-control(type='text' name='username' placeholder='Username')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='password') Password
+                    .col-sm-8
+                        input#password.form-control(type='text' name='password' placeholder='Password')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='firstname') First Name
+                    .col-sm-8
+                        input#firstname.form-control(type='text' name='firstname' placeholder='First Name')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='lastname') Last Name
+                    .col-sm-8
+                        input#lastname.form-control(type='text' name='lastname' placeholder='Last Name')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='phone') Phone
+                    .col-sm-8
+                        input#phone.form-control(type='number' name='phone' placeholder='Phone number')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='wechat') WeChat
+                    .col-sm-8
+                        input#wechat.form-control(type='text' name='wechat' placeholder='WeChat ID')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='alipay') Email
+                    .col-sm-8
+                        input#alipay.form-control(type='email' name='alipay' placeholder='Email')
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='usertype') User Type:
+                    .col-sm-8
+                        select#userType.form-control(name='usertype')
+                            option(value=1) Operator
+                            option(value=2) Tour Operator
+                            option(value=3) Local Guide
+                            option(value=4) Official Guide
+                            option(value=5) Tourist
+                .form-group.hidden#tourOperatorsSelect
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='tourOperators') Official Guide's Employer:
+                    .col-sm-8
+                        select#tourOperators.form-control(name='touroperator')
+                            each tour_operator in tour_operators
+                                option(value=tour_operator.id)= tour_operator.username
+                .form-group
+                    .col-sm-8.col-md-offset-3.text-right
+                        .text-danger.text-left= message
+                        button#submit.btn.btn-success(type='submit') 编辑
+    script.
+        $(function () {
+            $('#userType').change(function () {
+                var that = $(this);
+
+                if (that.val() == 4) {
+                    $('#tourOperatorsSelect').removeClass('hidden');
+                } else {
+                    $('#tourOperatorsSelect').addClass('hidden');
+                }
+
+            });
+
+
+        });

@@ -1,0 +1,119 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .col-md-10.col-md-offset-1.my-places-page
+        h3 我的景点
+        #trip_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='addexisting')
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    form(action='/mytrips/add' method='POST' name='addexisting')
+                        .modal-header
+                            button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                span(aria-hidden='true') ×
+                            h4#log-in.modal-title 添加到现有之旅
+                        .modal-body
+                            .form-group
+                                label(for='trip') 现有旅游（任选其一）:
+                                select#trip.form-control(name='trip')
+                                    if trips.length
+                                        each trip, i in trips
+                                            if !trip.checked_out
+                                                option(value=trip.id)= (trip.name || '默认') + ' (' + trip.destinations.length + ' 旅游景点)'
+                                    else
+                                        option 没有现成的旅行
+                        .modal-footer
+                            button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                            button.btn.btn-primary#addexisting(type='submit' disabled=!trips.length) 加
+        #delete_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='deleteplace')
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    form(action='/myplaces/delete' method='POST' name='deletedestination')
+                        .modal-header
+                            button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                span(aria-hidden='true') ×
+                            h4.modal-title 确认删除
+                        .modal-body
+                            | 你确定你要删除？
+                        .modal-footer
+                            button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                            button.btn.btn-primary#deletedestinations(type='submit') 删除
+        form(action='/mytrips/new' method='POST' name='newtrip')
+            table.table
+                tbody
+                    tr
+                        td(align='right', colspan='4')
+                            button.btn.btn-sm.btn-primary.disabled.myplaces-btn 创建新的旅行
+                            a.btn.btn-sm.btn-danger.disabled.myplaces-btn(data-toggle='modal' data-target='#delete_popup') 删除所选
+                        // a.btn.btn-sm.btn-success(href='/mytrips') 转到我的旅行
+                    tr
+                        th 名称
+                        th
+                        th 描述
+                        th(style='text-align: center;') 选择
+                            input.input-md#checkall(type='checkbox' style='margin-left: 5px;')
+                        if destinations.length
+                            each destination in destinations
+                                tr
+                                    td(width='12%' valign='middle')
+                                        a(href='/destination/' + destination.id)= destination.title['cn'] || destination.title['en']
+                                    td(width='8%' valign='middle')
+                                        if destination.media_id.photos
+                                            a(href='/destination/' + destination.id)
+                                                img.meadi(src=destination.media_id.photos[0] || '' width='70', height='69')
+                                    td(width='70%' valign='middle')
+                                        .myplaces-short-description=destination.short_description
+
+                                    td(width='10%' align='center' valign='middle')
+                                        label
+                                            input.select.input-lg.my-places-page(type='checkbox' data-pid=destination.id)
+
+                        else
+                            th
+                            tr
+                                td
+                                td
+                                td
+                                    br
+                                    .text-danger.text-center 添加的地方开始你的旅程。
+                                        br
+                                        br
+                                        a.btn.btn-primary(href='/search?m=destination') 搜索景点
+                                td
+                                td
+    script.
+        $(function () {
+            $('#existing').click(function () {
+                if ($('input.select:checked').length) {
+                    $('#addexisting').attr('disabled', false);
+                } else {
+                    $('#addexisting').attr('disabled', true);
+                }
+            });
+
+            $('[data-target=#delete_popup]').click(function () {
+                if ($('input.select:checked').length) {
+                    $('#deletedestinations').attr('disabled', false);
+                } else {
+                    $('#deletedestinations').attr('disabled', true);
+                }
+            });
+
+            $('[name=addexisting], [name=newtrip], [name=deletedestination]').submit(function (event) {
+
+                var that = $(this);
+
+                var data = {destinations: []};
+
+                if (!data) return;
+
+                debugger;
+
+                $('input.select:checked').each(function (index, value) {
+                    data.destinations.push($(this).data('pid'));
+                });
+
+                var places = $('<input type="hidden" name="data"/>').val(JSON.stringify(data));
+                that.append(places);
+            });
+
+        });

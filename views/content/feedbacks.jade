@@ -1,0 +1,29 @@
+extends ../layouts/dashboard
+
+block dashboard
+    table.table
+        h2 反馈
+        br
+        tbody
+            tr
+                th 电子邮件
+                th 学科
+                th 时间
+                th 内容
+                if feedbacks.length
+                    each feedback in feedbacks
+                        tr
+                            td= feedback.email
+                            td= feedback.subject
+                            td.display-date= feedback.timestamp
+                            td= feedback.message
+                else
+                    th(width='160px')
+                    tr
+                        td
+                        td
+                        td
+                            br
+                            .text-danger.text-center 没有反馈。
+                        td
+                        td

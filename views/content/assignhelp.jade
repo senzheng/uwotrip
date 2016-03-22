@@ -1,0 +1,129 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .col-md-9
+        table.table
+            tbody
+                tr(style='border-bottom: 1px solid #ddd; height: 87px;')
+                    th 用户名
+                    th 学科
+                    th 指南
+                    th
+                    if messages.length
+                        each message in messages
+                            each who in message.who
+                                if who.id != '56be2299f2b26c120299e541'
+                                    tr
+                                        input(type='hidden' name='asker_id' value=who.id)
+                                        td.asker= who.username
+                                        td= message.subject
+                                        td.guide 未分配
+                                        td.text-center
+                                            img.droppable(id=who.id src='/img/drag.png' width='100' height='100' style='z-index: 0;')
+        if !messages.length
+            .text-danger.text-center 无未决请求。
+    .col-md-3
+        #guiderow.hidden
+            img.draggable.image(src='' width='100' height='100' style='margin-right: 20px; z-index: 1;')
+            span.username
+            input(type='hidden' name='guide_id')
+            br
+            br
+        table.table
+            h2 联系指南
+            br
+            input#guidesearch(type='search' style='width: 100%;' placeholder='搜索指南')
+            br
+            br
+            #guideresults
+                each guide in guides
+                    #guiderow
+                        img.draggable.image(src=guide.media_id && guide.media_id.photos[0] ? guide.media_id.photos[0] : '' width='100' height='100' style='margin-right: 20px; z-index: 1;')
+                        span.username= guide.username
+                        input(type='hidden' name='guide_id' value=guide.id)
+                        br
+                        br
+    script.
+        $(function () {
+
+            var refreshDragDrop = function () {
+                $('.draggable').draggable({
+                    helper: 'clone'
+                });
+
+                $('.droppable').droppable({
+                    drop: function (event, ui) {
+                        var that = $(this);
+
+                        that.parents('tr').find('.guide').text(ui.draggable.parent().find('.username').text());
+                        that.attr('src', ui.draggable.attr('src'));
+
+                        var guide_id = ui.draggable.parent().find('[name=guide_id]').val();
+                        var asker_id = that.parents('tr').find('[name=asker_id]').val();
+
+                        that.droppable('option', 'disabled', true);
+
+                        $.post('/assignhelp', {
+                            asker: asker_id,
+                            guide: guide_id
+                        }, function (result) {
+
+                            that.parents('tr').fadeOut(5000);
+
+                        });
+
+                    }
+                });
+            };
+
+            $('#guidesearch').focus();
+
+            var guiderow = $('#guiderow');
+
+            var restart;
+
+            $('#guidesearch').on('input', function () {
+
+                if (restart) {
+                    clearTimeout(restart);
+                }
+
+                var keyword = this.value;
+
+                restart = setTimeout(function () {
+                    $.post('/searchguides', {
+                        keyword: keyword
+                    }, function (result) {
+
+                        if (result.success) {
+
+                            $('#guideresults').html('');
+
+                            result.guides.forEach(function (guide, i) {
+
+                                var row = guiderow.clone();
+
+                                row.removeClass('hidden');
+
+                                row.find('[name=guide_id]').val(guide._id);
+
+                                row.find('.username').text(guide.username);
+
+                                row.find('.image').attr('src', guide.media_id && guide.media_id.photos[0] ? guide.media_id.photos[0] : '');
+
+                                $('#guideresults').append(row);
+
+                            });
+
+                            refreshDragDrop();
+
+                        }
+
+                    });
+                }, 500);
+
+            });
+
+            refreshDragDrop();
+
+        });

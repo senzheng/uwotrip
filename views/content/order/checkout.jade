@@ -1,0 +1,549 @@
+extends ../../layouts/dashboard
+
+block dashboard
+    #inProgress.text-center.hidden Your trip is being generated. Please check back in a few minutes...
+    button#loading.btn.btn-success(data-toggle='modal' data-target='#confirm_loading' style='display: none;' type='button')
+    #confirm_loading.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='confirmloading')
+        .modal-dialog.modal-sm(role='document' style='top: 100px;')
+            .modal-content(style='height: 200px; background-color: black;')
+                #page
+                    #phrase_box
+                        svg(width='100%', height='100%')
+                            defs
+                                mask#mask(maskunits='userSpaceOnUse', maskcontentunits='userSpaceOnUse')
+                                    lineargradient#linearGradient(gradientunits='objectBoundingBox', x2='0', y2='1')
+                                        stop(stop-color='white', stop-opacity='0', offset='0%')
+                                        stop(stop-color='white', stop-opacity='1', offset='30%')
+                                        stop(stop-color='white', stop-opacity='1', offset='70%')
+                                        stop(stop-color='white', stop-opacity='0', offset='100%')
+                                    rect(width='100%', height='100%', fill='url(#linearGradient)')
+                            g(width='100%', height='100%', style='mask: url(#mask);')
+                                g#phrases
+    #confirm_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='confirmorder')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Review Order
+                .modal-body
+                    | Please review order details and click confirm when ready.
+                .modal-footer
+                    button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+                    button.btn.btn-primary#confirmorder(type='button') Confirm
+    .container-fluid.m-l-25
+        h3.col-md-12.page-header TRIP REQUIREMENT
+        .row
+            .col-md-7
+                | Please fill in the fields below and click "Confirm" to finish your order.
+                #message.text-primary
+            .col-md-5.col-sm-5.pull-right(style='margin-bottom: 20px;')
+                button#cancel.btn.btn-default(style='float: right;' type='button' data-tid=trip_id) CANCEL
+                button#change.btn.btn-default(style='float: right;' type='button' disabled=(order.tour_operator ? 'false' : 'true') data-tid=trip_id) CHANGE
+                if order.generated
+                    a#ordersummary.btn.btn-success(style='float: right;' type='button' disabled=(order.booked ? 'false' : 'true') data-tid=trip_id) CONFIRM
+                else
+                    button#confirm.btn.btn-success(data-toggle='modal' data-target='#confirm_popup' style='float: right;' type='button' data-tid=trip_id) CONFIRM
+        .row
+            form#generateform.form-horizontal
+                .col-md-4.generate-form-col
+                    .form-group
+                        label.col-sm-6.control-label TRIP NAME:
+                        .col-sm-11
+                            input#trip_name.form-control(type='text' value=order.name placeholder='Enter Trip Name' name='trip_name')
+                    .form-group
+                        label.col-sm-6.control-label STARTING ADDRESS:
+                        .col-sm-11
+                            input#start_address.form-control(type='text' disabled=order.generated value=order.start_address placeholder='Starting Location' name='start_address')
+                    .form-group
+                        label.col-sm-6.control-label ENDING ADDRESS:
+                        .col-sm-11
+                            input#end_address.form-control(type='text' disabled=order.generated value=order.end_address placeholder='Ending Location' name='end_address')
+                    .form-group
+                        label.col-sm-6.control-label NUMBER OF PEOPLE:
+                        .col-sm-11
+                            input#people.form-control(type='number' value=order.people disabled=order.generated placeholder='0' name='people')
+                    .form-group
+                        label.col-sm-6.control-label STARTING TIME:
+                        .col-sm-11
+                            input#start_time.datepicker.form-control(data-provide="datepicker" disabled=order.generated name='start_time')
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label PRICING:
+                        .col-sm-12
+                            .row
+                                .col-sm-6 Official Guide Rate:
+                                .col-sm-5 $140
+                            .row
+                                .col-sm-6 Official Guides:
+                                .col-sm-5
+                                    select#officialGuidesNeeded.form-control(name='official_guides' disabled=order.generated)
+                                        each option in [1, 2, 3, 4, 5]
+                                            option(value=option selected=(order.official_guides_count == option ? 'selected' : undefined))= option
+                            .row
+                                .col-sm-6 Driver/Official Guide Tip:
+                                .col-sm-5 $3 per tourist per day
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label SUGGESTION LIST:
+                        .col-sm-9 15 Tourists or below: 1 Official Guide as driver
+                        .col-sm-9 15 Tourists above: 1+ Official Guides
+                .col-md-4.generate-form-col#midtable.vehicle-select-col.p-d-25
+                    .form-group
+                        label.col-sm-12.control-label VEHICLE TYPE:
+                        .col-sm-12
+                            select#vehicleType.form-control(disabled=order.generated)
+                                option(value="1") 7 Seats ($400/day)
+                                option(value="2") 15 Seats ($450/day)
+                                option(value="3") 23 Seats ($550/day)
+                                option(value="4") 34 Seats ($650/day)
+                                option(value="5") 55 Seats ($800/day)
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label HOTEL RATING:
+                        .col-sm-12
+                            select#hotelLevel.col-sm-12.form-control(disabled=order.generated)
+                                option(value=1 disabled) &#9733; 1 star (Unavailable)
+                                option(value=2) &#9733;&#9733; 2 stars ($71/night)
+                                option(value=3 selected='selected') &#9733;&#9733;&#9733; 3 stars ($81/night)
+                                option(value=4) &#9733;&#9733;&#9733;&#9733; 4 stars ($99/night)
+                                option(value=5 disabled) &#9733;&#9733;&#9733;&#9733;&#9733; 5 stars (Unavailable)
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label HOTEL LOCATION:
+                        .col-sm-12
+                            if order.booked
+                                label.col-sm-4 Night 1:
+                                .col-sm-8
+                                    input.form-control(type='text' placeholder='Hotel address')
+                                label.col-sm-4 Night 2:
+                                .col-sm-8
+                                    input.form-control(type='text' placeholder='Hotel address')
+                                small.col-sm-6
+                                    i.fa.fa-plus-circle.fa-lg.m-r-20
+                                    | Add Night
+                                small.col-sm-6
+                                    i.fa.fa-minus-circle.fa-lg.m-r-20
+                                    | Remove Night
+                            else
+                                | Hotel information will appear after a Tour Operator books your order.
+                .col-md-4.generate-form-col.cost-select-col.p-d-25(style='background-color: #D0D0D0;')
+                    .form-group
+                        .col-sm-12#guideSelectTemplate.hidden
+                            select.form-control.guide-select(disabled=true)
+                                option(value=1) Unassigned
+                        label.col-sm-12.control-label OFFICIAL GUIDES:
+                        #officialGuides.col-sm-12
+                            if order.booked
+                                each og in order.official_guides
+                                    select.form-control.guide-select(disabled=true)
+                                        option(value=1)= og.username
+                            else
+                                | Official Guides will appear after they are assigned by Tour Operator.
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label LOCAL GUIDES:
+                        #localGuides.col-sm-12
+                            if !order.trip.length
+                                | Local Guides will be assigned after confirming order.
+                            else
+                                each day, i in order.trip
+                                    label.d-b= 'Day '  + (i + 1) + ':'
+                                        each waypoint in day
+                                            p= 'Disney: ' + waypoint.local_guide || 'Unassigned'
+                                            button.btn.btn-default(type='button') Chat
+                                            button.btn.btn-default(type='button') Request Change
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label ADDITIONAL COSTS:
+                        #costs.col-sm-12
+                            if order.booked
+                                .cost
+                                    .col-sm-3(style='padding: 0px;')
+                                        | $0.01
+                                    .col-sm-8(style='padding: 0px;')
+                                        | Description of cost
+                                    .col-sm-1(style='padding: 0px;')
+                                        i.fa.fa-minus-circle.fa-lg.m-l-10
+                            else
+                                | Additional costs will appear after being entered by Tour Operator.
+                    hr
+                    .form-group
+                        if order.booked
+                            span.d-b.col-sm-12='TOTAL VEHICLE COST: '
+                                span#vehicleCost= '$434.33'
+                            span.d-b.col-sm-12='TOTAL OFFICIAL GUIDE COST: '
+                                span#ogCost= '$434.33'
+                            span.d-b.col-sm-12='TOTAL LOCAL GUIDE COST: '
+                                span#lgCost= '$434.33'
+                            span.d-b.col-sm-12='TOTAL TIPS: '
+                                span#totalTips= '$434.33'
+                        else
+                            span.d-b.col-sm-12(style='font-weight: 600;')='ESTIMATED COST: '
+                                span#estimatedCost(style='font-weight: normal;')='$' + estimated_cost.toFixed(2)
+    #generated.row.hidden
+        h4.col-md-12 路线生成结果
+        .col-md-12
+            table.table
+                tr
+                    td= '节日名称: '
+                    span.trip-name
+                    td
+            div(style='float: right;')
+                button#print.btn.btn-info 打印此页
+                    i.fa.fa-print(style='margin-left: 5px;')
+                a.trip-details.btn.btn-primary(href='/mytrips/trip/' + trip_id) 旅程细节
+                a.plan-trip.btn.btn-warning(href='/plan/' + trip_id) 旅程计划
+                button.btn.btn-success#add_cart 加入购物车
+        br
+        br
+        br
+        br
+        #gmap-route(style='top: 30px; height: 380px; width: 100%;padding: 3px;border: 5px solid #ddd;font-size: 90%;')
+        br
+        br
+        h2
+            | 距离
+            strong#mi
+        #route(style='margin-bottom: 50px; top: 40px; position: relative;')
+    script.
+        $(function () {
+            var generated = #{order.generated || false};
+            var id = '#{id}';
+
+            if ($.cookie(id) == 'true' && !generated) {
+
+                $('#confirm').remove();
+
+                var progress = $('#inProgress');
+
+                progress.removeClass('hidden');
+
+                $('#shadow').replaceWith(progress);
+
+                $('#dashboard input').attr('disabled', true);
+                $('#dashboard select').attr('disabled', true);
+
+            } else {
+
+                $.removeCookie(id);
+
+            }
+
+            $('#confirmorder').click(function () {
+                $.cookie(id, true);
+
+                $('body').addClass('body-overflow');
+
+                var that = $(this);
+
+                that.attr('disabled', true)
+
+                $('#confirm_popup').modal('hide');
+                $('#confirm_loading').modal({backdrop: 'static', keyboard: false});
+                $('#confirm').hide();
+                setTimeout(function () {
+
+                    $('#message').show().fadeOut(5000).text('Order generated. Waiting to assign a Tour Operator.');
+                    window.location = '/orders';
+
+                }, 3000);
+
+                $.post('/trip/request', {
+                    id: id,
+                    start_time: $('#start_time').val(),
+                    start_address: $('#start_address').val(),
+                    end_address: $('#end_address').val(),
+                    people: $('#people').val(),
+                    trip_name: $('#trip_name').val(),
+                    official_guides_count: $('#officialGuidesNeeded').val(),
+                    hotel_level: $('#hotelLevel').val(),
+                    vehicle_type: $('#vehicleType').val()
+                }, function (result) {
+                    if (result.success) {
+
+                    } else {
+                        $('body').removeClass('body-overflow');
+                        $('#confirm').show();
+                        $('#confirm_loading').modal('hide');
+                        that.attr('disabled', false);
+                        $('#message').show().fadeOut(5000).text('There was a problem generating your trip.');
+                    }
+                });
+
+
+
+            });
+
+            var start = '#{order.start_time}';
+
+            $('.datepicker').datetimepicker({
+                defaultDate: start || moment()
+            });
+
+            $('.generate-form-col').matchHeight();
+
+            $('#officialGuidesNeeded').change(function () {
+                var length = $('.guide-select').length;
+
+
+                var needed = $('#officialGuidesNeeded').val();
+
+                var loops = Math.abs(needed - length);
+
+                if (length < needed) {
+
+
+                } else if (length > needed) {
+
+
+                }
+
+
+            });
+
+            /*var modes = ['requirement', 'edit', 'summary'];
+             var currentMode = 'requirement';
+
+             function changeStateForRequestState() {
+             $('.trip-header-btn').hide();
+             $('.cancel-trip-btn').show();
+             $('.confirm-trip-btn').show();
+             $('.vehicle-select-col input').attr('disabled', "disabled");
+             $('.cost-select-col input').attr('disabled', "disabled");
+             $('.vehicle-select-col select').attr('disabled', "disabled");
+             $('.cost-select-col select').attr('disabled', "disabled");
+             currentMode = 'requirement';
+             }
+
+             function changeStateForEditState() {
+             $('.trip-header-btn').hide();
+             $('.confirm-trip-btn').show();
+             $('.vehicle-select-col input').prop("disabled", false);
+             ;
+             $('.cost-select-col input').prop("disabled", false);
+             $('.vehicle-select-col select').prop("disabled", false);
+             $('.cost-select-col select').prop("disabled", false);
+             currentMode = 'edit';
+             }
+
+             function changeStateForSummaryState() {
+             currentMode = 'summary';
+             $('.trip-header-btn').show();
+             $('.vehicle-select-col input').attr('disabled', "disabled");
+             $('.cost-select-col input').attr('disabled', "disabled");
+             $('.vehicle-select-col select').attr('disabled', "disabled");
+             $('.cost-select-col select').attr('disabled', "disabled");
+             }
+
+             changeStateForRequestState();
+
+             $('.confirm-trip-btn').click(function () {
+             if (currentMode == 'requirement') {
+             changeStateForEditState();
+             } else if (currentMode == 'edit') {
+             changeStateForSummaryState();
+             } else {
+
+             }
+             });
+
+             $('.datepicker').datetimepicker({
+             defaultDate: moment()
+             });
+
+             $(".generate-form-col").matchHeight();
+
+             $('#add_cart').click(function () {
+             var that = $(this);
+
+             that.attr('disabled', true);
+
+             $.post('/cart/add', {tid: '#{trip_id}'}, function (result) {
+             if (result.success) {
+             window.location = '/cart';
+             }
+
+             that.attr('disabled', false);
+             });
+             });
+
+             var generate = function (button) {
+             var that = $(button);
+
+             that.attr('disabled', true);
+
+             var address1 = $('#address1').val();
+             var address2 = $('#address2').val();
+             var city = $('#city').val();
+             var state = $('#state').val();
+             var zip = $('#zip').val();
+             var people = $('#people').val();
+
+             var address = (address1.length ? address1 + ' ' : '') +
+             (address2.length ? address2 + ' ' : '') +
+             (city.length ? city + ' ' : '') +
+             (state.length ? state + ' ' : '') +
+             (zip.length ? zip : '');
+
+             $.post('/mytrips/generate', {
+             tid: that.data('tid'),
+             trip_name: $('#tripname').val(),
+             start_time: moment.utc($('#starttime').val()).format('YYYY-MM-DD HH:mm'),
+             start_address: address,
+             people: people
+             }, function (result) {
+             if (result.success) {
+             $('.trip-name').text(result.trip.name);
+             var table = $('.table');
+             var addresses = []
+
+             result.trip.destinations.forEach(function (destination, index) {
+             table.append('<tr><td>' + (index + 1) + '<span class="list-indent"><strong>' + destination.name + '</strong> ' + (destination.minutes / 60).toFixed(2) + ' 小时' + '</span></td><td></td></tr>');
+             addresses.push(destination.address);
+             });
+
+             var googleGeocoder = new GeocoderJS.createGeocoder({
+             'provider': 'google'
+             });
+
+             var LocsD = [];
+
+             var geocodeAddresses = function (addresses) {
+             googleGeocoder.geocode(addresses[0], function (result) {
+
+             LocsD.push({
+             lat: result[0].latitude,
+             lon: result[0].longitude,
+             title: '',
+             html: '',
+             stopover: true
+             });
+
+             addresses = addresses.splice(1, addresses.length - 1);
+
+             if (addresses.length) {
+             geocodeAddresses(addresses);
+             } else {
+             new Maplace({
+             locations: LocsD,
+             map_div: '#gmap-route',
+             generate_controls: false,
+             show_markers: false,
+             type: 'directions',
+             draggable: true,
+             directions_panel: '#route',
+             afterRoute: function (distance) {
+             $('#mi').text(': ' + ((distance / 1000) * .6214).toFixed(2) + ' 英里');
+             }
+             }).Load();
+             }
+             });
+             };
+
+             geocodeAddresses(addresses);
+
+             $('#generated').removeClass('hidden');
+
+
+             } else {
+             that.attr('disabled', false);
+             }
+
+             $('#message').text(result.message);
+             });
+             };*/
+
+            /*$('#generateform').validate({
+             rules: {
+             tripname: {
+             required: true,
+             minlength: 5
+             },
+             address1: {
+             required: true,
+             minlength: 5
+             },
+             city: {
+             required: true,
+             minlength: 5
+             },
+             state: {
+             required: true,
+             minlength: 2
+             },
+             zip: {
+             required: true,
+             digits: true
+             },
+             people: {
+             required: true,
+             digits: true
+             },
+             starttime: {
+             required: true
+             }
+             },
+             messages: {
+             tripname: {
+             required: '输入您的行程的名字。',
+             minlength: '你的名字是太短了。'
+             },
+             address1: {
+             required: '请输入您的地址。',
+             minlength: '您的地址是太短了。'
+             },
+             city: {
+             required: '请输入您的城市。',
+             minlength: '你的城市名称太短。'
+             },
+             state: {
+             required: '输入您的省份。',
+             minlength: '贵国是太短了。'
+             },
+             zip: {
+             required: '输入您的邮政编码。',
+             digits: '邮编只能包含数字。'
+             },
+             people: {
+             required: '进入人量。',
+             digits: '量人只能包含数字。'
+             },
+             starttime: {
+             required: '输入开始日期。'
+             }
+             },
+             highlight: function (element) {
+             $(element).closest('.form-group').addClass('has-error');
+             },
+             unhighlight: function (element) {
+             $(element).closest('.form-group').removeClass('has-error');
+             },
+             errorElement: 'span',
+             errorClass: 'help-block',
+             errorPlacement: function (error, element) {
+             if (element.parent('.input-group').length) {
+             error.insertAfter(element.parent());
+             } else {
+             error.insertAfter(element);
+             }
+             }
+             });
+
+             $('#generate').on('click', function (event) {
+             event.preventDefault();
+
+             if ($('#generateform').valid()) {
+             generate(this);
+             }
+
+             return false;
+             });
+
+             $('#print').click(function () {
+             $('#stage').html2canvas({
+             onrendered: function (canvas) {
+             $('#printimage').attr('src', canvas.toDataURL("image/png")).removeClass('hidden');
+             $("#printimage").printThis();
+             setTimeout(function () {
+             $("#printimage").addClass('hidden');
+             }, 3000);
+             }
+             });
+             });*/
+
+        });

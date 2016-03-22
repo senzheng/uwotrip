@@ -1,0 +1,31 @@
+extends ../layouts/dashboard
+
+block dashboard
+    h2 所有通知
+    table.table
+        tbody
+            tr
+                th(width='20%')
+                th 通知
+                th
+                if user.notifications.length
+                    each notification in user.notifications
+                        tr
+                            td.text-center(valign='middle')
+                                if notification.type == 'thank'
+                                    i.fa.fa-street-view.fa-5x.fa-align-center(style='color: skyblue;')
+                            td(valign='middle')
+                                a(href=notification.url id=notification.id)= notification.content
+                            td(valign='middle')
+                else
+                    th
+                    tr
+                        td
+                        td
+                            br
+                            .text-danger.text-center 您没有任何通知呢。
+                                br
+                                br
+                                button.btn.btn-primary(onclick='javascript: history.back()') 回去
+                        td
+                        td

@@ -1,0 +1,267 @@
+extends ../layouts/dashboard
+
+block dashboard
+    #contact_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='contactguide')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title 联系指南
+                .modal-body
+                    .form-group
+                        label(for='fullname') 全名：
+                        input#fullname.form-control(type='text' name='fullname' placeholder='全名' disabled=true)
+                        br
+                        label(for='phone') 电话：
+                        input#phone.form-control(type='number' name='phone' placeholder='电话' disabled=true)
+                        br
+                        label(for='wechat') 微信：
+                        input#wechat.form-control(type='text' name='wechat' placeholder='微信' disabled=true)
+                        br
+                        label(for='qq') QQ：
+                        input#qq.form-control(type='text' name='qq' placeholder='QQ' disabled=true)
+                        br
+                        label(for='email') 电子邮件：
+                        input#email.form-control(type='email' name='email' placeholder='电子邮件' disabled=true)
+                .modal-footer
+                    a.btn.btn-info#message(style='width: 98%;') 消息指南
+    .container-fluid
+        if user.is_guide
+            .row
+                .col-md-10.col-md-offset-1
+                    h3 向导订单
+                    if orders.length
+                        table.table.table-responsive
+                            tbody
+                                tr
+                                    th 订单号码
+                                    th 景点名称
+                                    th 长度
+                                    th 开始时间
+                                    th 结束时间
+                                    th 参加人数
+                                    th 支付状态
+                                    th 订单状态
+                                    th 已支付
+                                    th(width='10%')
+                                each order in orders
+                                    each trip in order.trips
+                                        each day, i in trip.days
+                                            each waypoint, j in day
+                                                if waypoint.guide == user.username
+                                                    each destination in trip.destinations
+                                                        if waypoint.destination_id == destination._id
+                                                            tr
+                                                                td
+                                                                    span(style='text-transform: uppercase;')= order.id
+                                                                td
+                                                                    strong
+                                                                        if destination.destination_id
+                                                                            a(href='/destination/' + destination.destination_id.id)= destination.name
+                                                                        else
+                                                                            span= destination.name
+                                                                td= (destination.minutes / 60).toFixed(1) + '小时'
+                                                                td
+                                                                    .display-date= destination.start_time || 'N/A'
+                                                                td
+                                                                    .display-date= destination.end_time || 'N/A'
+                                                                td= destination.people ? destination.people + '人' : 'N/A'
+                                                                td= waypoint.payment_status || order.payment_status || '押金'
+                                                                td= waypoint.order_status || order.order_status || '等待分配'
+                                                                td= '$' + (destination.minutes * 2).toFixed(2)
+                                                                td
+                                                                    .dropdown
+                                                                        button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                                                                            | 选择动作
+                                                                            span.caret
+                                                                        br
+                                                                        ul.dropdown-menu(aria-labelledby='dropdownMenu1' style='float: right; position: relative;')
+                                                                            li
+                                                                                //a(href='/complete/destination/' + waypoint.destination_id + '/' + i + '/' + j) 完成
+                                                                                a(href='#') 完成
+                                                                            li
+                                                                                //a(href='/cancel/destination/' + waypoint.destination_id + '/' + i + '/' + j) 结束
+                                                                                a(href='#') 结束
+                                                                            li
+                                                                                //a(href='/dispute/' + order.id) 争议
+                                                                                a(href='#') 争议
+                                                                            li
+                                                                                a.contact(href='#' data-toggle='modal' data-target='#contact_popup' data-gid=order.operator.username) 联系
+                    else
+                        br
+                        .text-danger.text-center 您没有任何订单呢。
+        else
+            h3 运营商的订单
+            each order in orders
+                .border-top-line
+                    .order(style='display: inline-block;')= '订单：'
+                        span(style='text-transform: uppercase;')= order.id
+                    div= ' 已支付： $'
+                        span= (order.paid / 100).toFixed(2)
+                    div= ' 当前余额： $'
+                        span= order.estimate
+                    .dropdown(style='width: 160px; right: 0px; position: absolute;')
+                        button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                            | 选择动作
+                            span.caret
+                        ul.dropdown-menu(aria-labelledby='dropdownMenu1')
+                            if parseInt(order.estimate) > 0
+                                li
+                                    a.payorder(href='#' data-order=order.id data-price=order.estimate) 支付余额
+                            li
+                                a(href='/order/' + order.id) 订单详情
+                            li
+                                //a(href='/dispute/' + order.id) 争议
+                                a(href='#') 争议
+                table
+                    tbody
+                        tr
+                            th 旅程名称
+                            th 长度（小时)
+                            th 价格
+                            th
+                            each trip, i in order.trips
+                                tr
+                                tr
+                                    // Trip
+                                    td
+                                        a(href='/orders/trip/' + trip.id)= trip.name
+                                    td= (trip.minutes / 60).toFixed(1)
+                                    td= '$' + parseFloat(trip.estimate).toFixed(2)
+                                    td
+                                        .dropdown
+                                            button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                                                | 选择动作
+                                                span.caret
+                                            ul.dropdown-menu(aria-labelledby='dropdownMenu1')
+                                                li
+                                                    //a(href='/complete/trip/' + trip.id) 完成
+                                                    a(href='#') 完成
+                                                li
+                                                    //a(href='/cancel/trip/' + trip.id) 取消
+                                                    a(href='#') 取消
+                                                li
+                                                    a(href='/orders/trip/' + trip.id) 详细行程
+                                                //li
+                                                    a.payorder(href='#' data-price=parseFloat(order.estimate) >= parseFloat(trip.estimate) ? trip.estimate : order.estimate data-order=order.id) 支付余额
+                                                li
+                                                    //a(href='/dispute/' + order.id) 争议
+                                                    a(href='#') 争议
+                                    tr
+                                        th
+                                        th 景点名称
+                                        th 长度（小时)
+                                        th 价格
+                                        th 参加人数
+                                        th 支付状态
+                                        th 订单状态
+                                        th 向导
+                                        th
+                                each day, j in trip.days
+                                    each waypoint, k in day
+                                        each destination in trip.destinations
+                                            if waypoint.destination_id == destination._id
+                                                tr
+                                                    td
+                                                        img(src=destination.destination_id && destination.destination_id.media_id ? destination.destination_id.media_id.photos[0] : 'http://www.davidluke.com/wp-content/themes/david-luke/media/ims/placeholder720.gif' width=32 height=32)
+                                                    td
+                                                        strong
+                                                            if destination.destination_id
+                                                                a(href='/destination/' + destination.destination_id.id)= destination.name
+                                                            else
+                                                                span= destination.name
+                                                    td= (destination.minutes / 60).toFixed(1)
+                                                    td= destination.destination_id ? '$' + (destination.minutes * 2).toFixed(2) : '$0.00'
+                                                    td= destination.people || 'N/A'
+                                                    if destination.destination_id
+                                                        td= waypoint.payment_status || order.payment_status || '押金'
+                                                        td= waypoint.order_status || order.order_status || '等待分配'
+                                                        td= waypoint.guide || '等待分配'
+                                                        td
+                                                            button.contact(data-toggle='modal' data-target='#contact_popup' disabled=waypoint.guide ? false : true data-gid=waypoint.guide) 联系
+                                                        td
+                                                            .dropdown
+                                                                button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                                                                    | 选择动作
+                                                                    span.caret
+                                                                ul.dropdown-menu(aria-labelledby='dropdownMenu1')
+                                                                    if new Date(Date.now()) > new Date(destination.start_time)
+                                                                        li
+                                                                            //a(href='/complete/destination/' + waypoint.destination_id + '/' + j + '/' + k) 完成
+                                                                            a(href='#') 完成
+                                                                    li
+                                                                        //a(href='/cancel/destination/' + waypoint.destination_id + '/' + j + '/' + k) 取消
+                                                                        a(href='#') 取消
+                                                                    li
+                                                                        //a(href='/dispute/' + order.id) 争议
+                                                                        a(href='#') 争议
+                br
+                br
+            if !orders.length
+                .text-danger.text-center 没有订单签出。
+                br
+                br
+    script.
+        $(function () {
+            $('.contact').click(function () {
+                var gid = $(this).data('gid');
+                $('#contact_popup #message').attr('disabled', true).attr('href', '#');
+
+                $.post('/contact', {gid: gid}, function (result) {
+                    if (result.success) {
+                        $('#contact_popup #fullname').val(result.fullname);
+                        $('#contact_popup #phone').val(result.phone);
+                        $('#contact_popup #wechat').val(result.wechat);
+                        $('#contact_popup #qq').val(result.qq);
+                        $('#contact_popup #email').val(result.email);
+                        $('#contact_popup #message').attr('href', '/messages/' + result.id);
+                        $('#contact_popup #message').attr('disabled', false);
+                    }
+                });
+            });
+
+            $('.payorder').on('click', function (e) {
+                var that = $(this);
+                var amount = parseFloat(that.data('price')).toFixed(2).replace('.', '');
+
+                that.attr('disabled', false);
+                // Open Checkout with further options
+                var handler = StripeCheckout.configure({
+                    key: 'pk_test_3pykNl2uOMSk8iluOnXIpLCV',
+                    locale: 'zh',
+                    allowRememberMe: true,
+                    image: 'https://cdn4.iconfinder.com/data/icons/business-bicolor-2/512/donation-512.png',
+                    alipay: true,
+                    email: '#{user.email}',
+                    token: function (token) {
+                        $.post('/payorder', {
+                            token: token.id,
+                            amount: amount,
+                            oid: that.data('order')
+                        }, function (result) {
+                            if (result.success) {
+                                window.location = '/confirm?o=' + that.data('order') + '&s=true';
+                            } else {
+                                window.location = '/confirm?o=' + that.data('order') + '&s=false';
+                            }
+
+                            that.attr('disabled', false);
+                        });
+                    }
+                });
+
+                handler.open({
+                    name: '付款',
+                    description: '选择付款方式。',
+                    amount: amount
+                });
+                e.preventDefault();
+            });
+
+            // Close Checkout on page navigation
+            $(window).on('popstate', function () {
+                handler.close();
+            });
+        });
+

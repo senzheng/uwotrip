@@ -1,0 +1,42 @@
+extends ../layouts/dashboard
+
+block dashboard
+    table.table
+        h2 批准
+        br
+        tbody
+            tr
+                th 用户名
+                th 电子邮件
+                th 名字
+                th 姓
+                th 微信
+                th QQ
+                th 电话
+                th
+                if guides.length
+                    each user in guides
+                        tr
+                            td= user.username
+                            td= user.email
+                            td= user.first_name
+                            td= user.last_name
+                            td= user.wechat
+                            td= user.qq
+                            td= user.phone
+                            td
+                                form(action='/approveguides' method='POST')
+                                    input(type='hidden' name='id' value=user.id)
+                                    button.btn.btn-success(type='submit') 批准
+                else
+                    tr
+                        td
+                        td
+                        td
+                        td
+                            br
+                            .text-danger.text-center 没有未决用户。
+                        td
+                        td
+                        td
+                        td

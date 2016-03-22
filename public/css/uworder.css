@@ -1,0 +1,50 @@
+.fa-check-circle {
+	color: green;
+}
+
+.list li a{
+	color : black;
+}
+
+.menulist li a {
+	font-size: 70%;
+	font-weight: bold;
+}
+
+
+.list li a:hover{
+    text-decoration: none;
+}
+
+.highlight {
+	background-color: grey;
+}
+
+.orderpreview button {
+	border: 0px;
+	background-color:#EBEBEB;
+	font-size: 80%;
+	font-weight: bolder;
+}
+
+
+.disputeform a{
+    border: 0px;
+	background-color:#EBEBEB;
+	font-size: 80%;
+	font-weight: bolder;
+	color:black;
+}
+
+.disputeform a:hover{
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.disputeform input {
+	border: 0px;
+	background-color:#EBEBEB;
+	font-size: 80%;
+	font-weight: bolder;
+	margin-left: 2px;
+}

@@ -1,0 +1,52 @@
+if results.length
+    ul.pagination
+        li
+            if page > 1
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) - 1) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '') aria-label='Previous')
+                    span(aria-hidden='true') 上一页
+            else
+                span(aria-hidden='true') 上一页
+        if page <= 4
+            if max >= 1
+                li
+                    a(href='/search?m=' + mode + '&p=1' + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) 1
+            if max >= 2
+                li
+                    a(href='/search?m=' + mode + '&p=2' + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) 2
+            if max >= 3
+                li
+                    a(href='/search?m=' + mode + '&p=3' + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) 3
+            if max >= 4
+                li
+                    a(href='/search?m=' + mode + '&p=4' + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) 4
+            if max >= 5
+                li
+                    a(href='/search?m=' + mode + '&p=5' + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) 5
+        else if (parseInt(max) - parseInt(page)) <= 3
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(max) - 4) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(max) - 4}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(max) - 3) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(max) - 3}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(max) - 2) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(max) - 2}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(max) - 1) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(max) - 1}
+            li
+                a(href='/search?m=' + mode + '&p=' + max + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{max}
+        else
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) - 2) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(page) - 2}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) - 1) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(page) - 1}
+            li
+                a(href='/search?m=' + mode + '&p=' + page + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{page}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) + 1) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(page) + 1}
+            li
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) + 2) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '')) #{parseInt(page) + 2}
+        li
+            if page < max
+                a(href='/search?m=' + mode + '&p=' + (parseInt(page) + 1) + (category ? '&c=' + category : '') + (keywords ? '&k=' + keywords : '') aria-label='Next')
+                    span(aria-hidden='true') 下一页
+            else
+                span(aria-hidden='true') 下一页

@@ -1,0 +1,445 @@
+extends ../layouts/master
+
+block content
+    br
+    if mode == 'destination'
+        .col-md-2.col-md-offset-1(style='display: none;')
+            .row
+                #accordion.panel-group(role='tablist', aria-multiselectable='false')
+                    .panel.panel-default
+                        #headingThree.panel-heading(role='tab')
+                            p.panel-title
+                                a(role='button', data-toggle='collapse' data-parent='#accordion' href='#collapse' aria-expanded='true' aria-controls='collapseThree') 旅游
+                        #collapse.panel-collapse.collapse.in(role='tabpanel' aria-labelledby='headingThree' aria-expanded='true')
+                            .panel-body
+                                ul
+                                    li
+                                        a(href='?m=' + mode + '&c=地标' + (keywords ? '&k=' + keywords : '')) 地标
+                                    li
+                                        a(href='?m=' + mode + '&c=博物馆' + (keywords ? '&k=' + keywords : '')) 博物馆
+                                    li
+                                        a(href='?m=' + mode + '&c=游乐园' + (keywords ? '&k=' + keywords : '')) 游乐园
+                                    li
+                                        a(href='?m=' + mode + '&c=活动' + (keywords ? '&k=' + keywords : '')) 活动
+                                    li
+                                        a(href='?m=' + mode + '&c=自然风光' + (keywords ? '&k=' + keywords : '')) 自然风光
+                                    li
+                                        a(href='?m=' + mode + '&c=购物' + (keywords ? '&k=' + keywords : '')) 购物
+                                    li
+                                        a(href='?m=' + mode + '&c=夜生活' + (keywords ? '&k=' + keywords : '')) 夜生活
+                                    li
+                                        a(href='?m=' + mode + '&c=餐厅' + (keywords ? '&k=' + keywords : '')) 餐厅
+                                    li
+                                        a(href='?m=' + mode + '&c=动物园与水族馆' + (keywords ? '&k=' + keywords : '')) 动物园与水族馆
+                                    li
+                                        a(href='?m=' + mode + '&c=搭船' + (keywords ? '&k=' + keywords : '')) 搭船
+                                    li
+                                        a(href='?m=' + mode + '&c=教育' + (keywords ? '&k=' + keywords : '')) 教育
+                                    li
+                                        a(href='?m=' + mode + '&c=家庭游' + (keywords ? '&k=' + keywords : '')) 家庭游
+                                    li
+                                        a(href='?m=' + mode + '&c=情侣游' + (keywords ? '&k=' + keywords : '')) 情侣游
+                                    li
+                                        a(href='?m=' + mode + '&c=其他' + (keywords ? '&k=' + keywords : '')) 其他
+    else
+        .col-md-1.col-md-offset-1
+
+    .col-md-6.place-detail(id="place-detail", style='display: none')
+
+    
+
+    .col-md-6
+        .row.page
+            nav.col-md-offset-3.col-md-6
+                include ../partials/searchpagination
+
+        .row.places-wrapper
+            each result in results
+                - var tagId = 'detail-' + result._id
+                .detail(id=tagId, style='display: none')
+                    button.close-btn X
+                    if result.media_id.photos.length
+                        .carousel.slide(data-ride='carousel', id="carousel-place-detail")
+                            .carousel-inner(role='listbox')
+                                each photo, i in result.media_id.photos
+                                    a.item.magnific-popup-item(class=i == 0 ? 'active' : '', rel="place-gallery",href=result.media_id.photos[i], title="")
+                                        .uwo_image_carousel(style="background:url("+result.media_id.photos[i]+") no-repeat center center; height:36em;")
+
+                            if result.media_id.photos.length > 1
+                                each photo, i in result.media_id.photos
+                                    ol.carousel-indicators
+                                        li(data-target="#carousel-place-detail", data-slide-to=i, class=i == 0 ? 'active' : '')
+                    .container-fluid.popup-detail
+                        .col-md-5.left
+                            .col-md-12.col-sm-6.col-xs-6
+                                h3= result.title['cn'] || result.title['en']
+                                table.showtable
+                                    tbody
+                                        col(width='75px')
+                                        if result.address
+                                            tr
+                                                p 地址
+                                                p= result.address
+                                        if result.attractions
+                                            tr
+                                                p 景点介绍
+                                                p= result.attractions
+                                        if result.phone
+                                            tr
+                                                p 手机号码
+                                                p= result.phone
+                                        if result.website
+                                            tr
+                                                p 网站
+                                                p
+                                                    a(href=result.website)= result.website
+                                        if result.minutes
+                                            tr
+                                                p 分钟
+                                                p= result.minutes
+                                        if result.admission
+                                            tr
+                                                p 价格
+                                                p= result.admission
+                                        if result.owner && result.owner.id != user.id && !user.is_guide
+                                            tr
+                                                p 联系
+                                                p
+                                                    a.btn.btn-primary(style='width: 100%;' href='/messages/' + result.owner.id)= result.owner.username
+                                        else if !result.owner && user && !user.is_guide
+                                            tr
+                                                p 联系
+                                                p
+                                                    form(action='/gethelp' method='POST')
+                                                        input(type='hidden' name='result' value=result.title['cn'] || result.title['en'])
+                                                        button.btn.btn-primary(type='submit' style='width: 100%;') 得到帮助
+                                if user && !user.is_guide && !user.is_admin
+                                    .text-center
+                                        a.btn.btn-primary.add-btn(data-pid=result.id)= '添加景点'
+                                br
+                                br
+                        .col-md-7.right
+                          .rightupper
+                            if result.introduction
+                                h4 介绍
+                                p= result.introduction
+                            if result.description
+                                h4 描述
+                                p= result.description
+                          .rightlower
+                             
+                             .col-md-3
+                                .userpic    
+                                    img(src="img/icons/LA1.jpg")
+                             .col-md-9
+                                 
+                                ul
+                                   li Name
+                                   li  
+                                     .add-rate
+                                        i.fa.fa-star
+                                        i.fa.fa-star
+                                        i.fa.fa-star
+                                        i.fa.fa-star
+                                        i.fa.fa-star   
+                                   li  asdfasdfasdfasdf
+
+                .col-md-4.col-sm-4.nopadding
+                    if mode == 'destination'
+                        .thumbnail
+                            // img.add-to-cart(src='/img/icons/add-to-cart.png' height="15%" width="15%")
+                            if user && !user.is_guide && !user.is_admin
+                            // a(style="background:url('/img/icons/add-to-cart.png') no-repeat; " data-pid=result.id)
+                            a.add-to-cart-icon(data-pid=result.id)
+                                img(src='/img/icons/add-to-cart.png' )
+                                i.fa.fa-spinner.fa-spin.loading-indicator
+                            a.add-to-cart-info(data-pid=result.id)
+                                i.fa.fa-info-circle.fa-lg
+                            a.add-to-cart-rate(data-pid=result.id)
+                                i.fa.fa-star
+                                i.fa.fa-star
+                                i.fa.fa-star
+                                i.fa.fa-star
+                                i.fa.fa-star    
+                            a.preview-img(href='/destination/' + result.id, style="background: url("+ result.media_id.photos[0] +") no-repeat center center; ")
+                            .caption
+                                div.text-left
+                                    a.thumb-title(href='/destination/' + result.id)=result.title['cn'] || result.title['en']
+                                    div.thumb-description= result.description ? result.description.substr(0, 50) + '...' : ''
+                                    if user && !user.is_guide && !user.is_admin
+                                        // a.btn.btn-primary.add-btn(data-pid=result.id) 添加景点
+                            .preview-content
+                                .fit-size
+                                .preview-content-description
+                                    h4=result.title['cn'] || result.title['en']
+                                    div.preview-detail=result.description
+                    else
+                        .thumbnail
+                            .preview-img(href='/guide/' + result.id, style="background: url("+ result.media_id.photos[0] +") no-repeat center center; ")
+                            .caption
+                                p.text-left
+                                    a(href='/guide/' + result.id)= result.username
+                                    div= result.description ? result.description.substr(0, 50) + '...' : ''
+                            .preview-content
+                                .fit-size
+                                .preview-content-description
+                                    h4=result.title['cn'] || result.title['en']
+                                    div.preview-detail=result.description
+
+        
+
+
+
+            if !results.length
+                br
+                br
+                .text-danger.text-center 未找到结果。
+                    br
+                    br
+                    br
+                    a.btn.btn-primary(onclick='javascript:history.back()') 回去
+        .row.places-wrapperTemp
+                    
+        
+    .col-md-6.map-wrapper
+        div(id="map", style='position:fixed;')
+        .infobox-wrapper
+            div(id="infobox")
+
+    script(type="text/javascript").
+        var results = !{JSON.stringify(results).replace(/<\//g, "<\\/")}
+        var mode = "#{mode}";
+        var map = {};
+        var markers = [];
+        var markerBounds = new google.maps.LatLngBounds();
+        var selectedIcon = '/img/icons/selected-location.png';
+        var listedIcon = '/img/icons/listed-location.png';
+        var infobox;
+        
+         
+
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 4,
+                minZoom: 1,
+                center: {lat: 100.4224764, lng: 80.0842499},
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            requestMarkerByAddress();
+        }
+
+       
+
+        $("body").on('click', '.close-btn', function(evt){
+            evt.stopPropagation();
+            evt.preventDefault();
+            $("#place-detail").hide();
+            $(".close-btn").hide();
+        });
+
+        count = 1;
+        page = 1
+         function loadMore(n)
+            {
+
+               
+               
+               $(window).bind('scroll', bindScroll);
+               $.post('/getresults', {p:  n}, function (data) {
+                  $('.row.places-wrapperTemp').last().after(data);
+                });
+               $.post('/getresults/json', {p:  n}, function (data) {
+                  
+                  for(var i = 0; i < data.results.length; i++){
+                     results.push(data.results[i]);
+                  }
+                  var m = n - 1;
+                  if(n < 4){
+                     $('.pagination li:nth-child('+ (n - 1) +')').removeClass("active");
+                     $('.pagination li:nth-child('+ n +')').addClass("active");
+                  }else {
+                     $('.pagination li:nth-child('+ 3 +')').removeClass("active");
+                     $('.pagination li:nth-child('+ 4 +')').addClass("active");
+                     var pointer = 1;
+                     for(var i = page; i <= (page + 5); i++){
+                    
+
+                      $('.pagination li:nth-child('+ pointer +') a').text(i);
+
+                      pointer = pointer + 1;
+                     }
+
+                     page++;
+
+                  }
+
+
+                 
+                 console.log(results.length);
+                 requestMarkerByAddress();
+                  initMap();
+                });
+               
+                
+             }
+             
+             function bindScroll(){
+
+               if($(window).scrollTop() == $(document).height() - $(window).height()) {
+                  $('.col-md-6').addClass('scroll');
+                       $(window).unbind('scroll');
+                       count++;
+                       loadMore(count);
+                   }
+               if( document.body.scrollTop === 0){
+                  $('.places-wrapperTemp').hide();
+                  for(var i = 2; i < 7; i++){
+                      $('.pagination li:nth-child('+ i +') a').text(i - 1);
+                      $('.pagination li:nth-child('+ i +')').removeClass("active");
+                  }
+                  count = 1;
+
+                  $('.pagination li:nth-child('+ 2 +')').addClass("active");
+               }
+                                       
+                 
+            }
+
+
+           
+
+             
+            $(window).scroll(bindScroll);
+
+
+
+       
+        $('.add-to-cart-info').click(function(){
+        var that = $(this);
+              var detail = $('#detail-' + that.data('pid')).html();
+                            $("#place-detail").html(detail).show();
+                            $(".close-btn").show();
+        });
+       
+
+        $('.add-to-cart-icon').click(function () {
+            var that = $(this);
+
+            if (that.attr('disabled')) {
+                return;
+            }
+            that.find('img').hide();
+            that.find('.loading-indicator').css('display', 'block');
+
+            that.attr('disabled', true);
+
+            $.post('/myplaces/add', {id: that.data('pid')}, function (result) {
+                if (result.success) {
+                    that.find('img').attr('src', '/img/icons/remove-from-cart.png');
+                } else {
+                    that.attr('disabled', false);
+                }
+
+                that.find('img').show();
+                that.find('.loading-indicator').css('display', '');
+            });
+        });
+
+        function requestMarkerByAddress(){
+            var index = 0;
+            function _doGeocode(index){
+                if (results[index].address)
+                    var address = results[index].address;
+                else
+                    _doGeocode(index+1);
+                geocoder.geocode({address: address}, function(res, status){
+                    if (status == 'OK'){
+                        var position = {
+                            lat: res[0].geometry.location.lat(),
+                            lng: res[0].geometry.location.lng()
+                        };
+
+                        markerBounds.extend(new google.maps.LatLng(position.lat, position.lng) );
+
+                        var marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            icon: listedIcon
+                        });
+
+                        //- var infowindow = new google.maps.InfoWindow({
+                        //-     content: "<div style=\"background: url('/img/icons/location-info-bubble.png')\"> <div><strong>" + results[index].title['cn'] || results[index].title['en'] + "</strong></div> " + results[index].description + "</div>"
+                        //- });
+
+                        marker.addListener('mouseover', function() {
+                            this.setIcon(selectedIcon);
+                            var content = '<div id="infobox"><div class="font-bold">' + (results[index].title['cn'] || results[index].title['en']) + '</div>' +
+                                    '<div class="info-window-description">' + results[index].description + '</div></div>';
+                            $('.infobox-wrapper').html(content);
+                            infobox = new InfoBox({
+                                content: document.getElementById("infobox"),
+                                disableAutoPan: false,
+                                pixelOffset: new google.maps.Size(-140, 0),
+                                zIndex: null,
+                                boxStyle: {
+                                    background: "url('/img/icons/location-info-bubble.png') no-repeat",
+                                    opacity: 1,
+                                    width: "266px",
+                                    height: "112px"
+                                },
+                                closeBoxMargin: "12px 4px 2px 2px",
+                                infoBoxClearance: new google.maps.Size(1, 1),
+                                pixelOffset: new google.maps.Size(-262, -170)
+                            });
+                            infobox.open(map, this);
+                        });
+
+                        // assuming you also want to hide the info box when user mouses-out
+                        marker.addListener('mouseout', function() {
+                            this.setIcon(listedIcon);
+                            infobox.close();
+                        });
+
+                        marker.addListener('click', function() {
+                            var detail = $('#detail-' + results[index]._id).html();
+                            $("#place-detail").html(detail).show();
+                            $(".close-btn").show();
+                        });
+
+
+
+                        markers.push(marker);
+                    }
+
+                    if (index < results.length-1){
+                        _doGeocode(index+1);
+                    }else{
+                        var markerCluster = new MarkerClusterer(map, markers);
+                        map.fitBounds(markerBounds);
+                    }
+                });
+            }
+
+            _doGeocode(0);
+        }
+
+        function resetMarkerIcons() {
+            //  reset all the icons back to normal except the one you clicked
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setIcon(listedIcon);
+            }
+        }
+
+        $( ".thumbnail" ).mouseover(function() {
+            $(this).find('.preview-content').css('transform', 'translate3d(0, -240px, 0)');
+            $(this).find('.add-to-cart-info').show();
+        });
+
+        $( ".thumbnail" ).mouseout(function() {
+            $(this).find('.preview-content').css('transform', '');
+        });
+
+        var geocoder = new google.maps.Geocoder();
+
+        initMap()

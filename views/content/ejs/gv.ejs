@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="guide"><!-- InstanceBegin template="/Templates/portal.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Bootstrap - Prebuilt Layout</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Bootstrap -->
+<link href="/css/bootstrap.css" rel="stylesheet">
+
+
+
+
+<script src="/js/lib/jquery.min.js"></script>
+<script src="/js/lib/angular.min.js"></script>
+<script src="/js/controllers/guideCtrl.js"></script>
+<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.2.4.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/guide.css" rel="stylesheet">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+ <script>
+    var guide = <%- JSON.stringify(guides) %>;
+    console.log(guide);
+ </script>
+
+
+</head>
+<body ng-controller="guideCtrl" style="padding: 0px;">
+     <nav class="navbar navbar-inverse" style="background-color: #8EBFE7; border-radius: 0px; margin-bottom: 0px;">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#inverseNavbar1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <a class="navbar-brand" href="#">Brand</a></div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="inverseNavbar1">
+      <ul class="nav navbar-nav">
+        <li class="active"></li>
+        <li></li>
+        <li class="dropdown">
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="col-md-8 navbar-form navbar-left" role="search">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="特色景点" aria-label="...">
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default">发送!</button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a href="#">特色景点</a></li>
+              <li><a href="#">搜索向导</a></li>
+            </ul>
+          </div>
+        </div>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="">特色景点</a></li>
+        <li><a href="">搜索向导</a></li>
+        <li><a href="">购物车</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#register_stage">注册</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#login_stage">登陆</a></li>
+        <li><a href="">成为向导</a></li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container-fluid -->
+</nav>
+   <div class="container-fluid content">
+        <div class="slider">
+          <img src="/img/LA1.jpg">
+        </div>
+        <div class="profile">
+          <div class="left col-md-6">
+                <div class="userpic2">
+                  <img src="/img/guides/lasvegas/photos/hY1D3G0nPq.jpg">
+                </div>
+                <div class="name"><%= guides[0].last_name %> <%= guides[0].first_name %></div>
+                <div class="rating"><uib-rating ng-model="total" max="max" read-only="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating" style="float: left" disabled></uib-rating><input type="text" name="rating" value="{{total}}" style="display:none"/><span class="reviewamount"> 1 Reviews</span></div>
+                
+                <div class="intro">
+                    <h5>INTRODUCTION</h5>
+                    <p><%= guides[0].description %></p>
+                </div>
+          </div>
+          <div class="right col-md-6">
+                <div class="icon">
+                  <div class="icon-left"><i class="fa fa-heart-o fa-lg"></i></div>
+                  <div class="icon-right"><i class="fa fa-envelope-o fa-lg"></i></div>
+                </div>
+                <div class="contentwo"><%= guides[0].description %>
+                </div>
+                <div class="reviews">
+                  <div class="pangination">
+                    <span>REVIEWS</span>
+                       <ul>
+                         <li><button>1</button></li>
+                       </ul>
+                  </div>
+                  
+                    <div class="row">
+                      <div class="col-md-3">
+                          <div class="userpic">
+                            <img src="">
+                          </div>
+                      </div>
+                       <div class="col-md-9">
+                            <ul>
+                              <li>Name:</li>
+                              <li><uib-rating ng-model="total" max="max" read-only="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating" style="float: left" disabled></uib-rating><input type="text" name="rating" value="{{total}}" style="display:none"/>  3/10/16 </li>
+                              <li>Good indeed </li>
+                            </ul>
+                      </div>
+                  
+                </div>
+          </div>
+        </div>
+
+
+   </div>
+
+
+   
+</body>
+</html>

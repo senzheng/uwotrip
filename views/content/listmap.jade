@@ -1,0 +1,105 @@
+extends ../layouts/master
+
+block content
+    br
+    if mode == 'destination'
+        .col-md-2.col-md-offset-1
+            .row
+                #accordion.panel-group(role='tablist', aria-multiselectable='false')
+                    .panel.panel-default
+                        #headingThree.panel-heading(role='tab')
+                            p.panel-title
+                                a(role='button', data-toggle='collapse' data-parent='#accordion' href='#collapse' aria-expanded='true' aria-controls='collapseThree') 旅游
+                        #collapse.panel-collapse.collapse.in(role='tabpanel' aria-labelledby='headingThree' aria-expanded='true')
+                            .panel-body
+                                ul
+                                    li
+                                        a(href='?m=' + mode + '&c=地标' + (keywords ? '&k=' + keywords : '')) 地标
+                                    li
+                                        a(href='?m=' + mode + '&c=博物馆' + (keywords ? '&k=' + keywords : '')) 博物馆
+                                    li
+                                        a(href='?m=' + mode + '&c=游乐园' + (keywords ? '&k=' + keywords : '')) 游乐园
+                                    li
+                                        a(href='?m=' + mode + '&c=活动' + (keywords ? '&k=' + keywords : '')) 活动
+                                    li
+                                        a(href='?m=' + mode + '&c=自然风光' + (keywords ? '&k=' + keywords : '')) 自然风光
+                                    li
+                                        a(href='?m=' + mode + '&c=购物' + (keywords ? '&k=' + keywords : '')) 购物
+                                    li
+                                        a(href='?m=' + mode + '&c=夜生活' + (keywords ? '&k=' + keywords : '')) 夜生活
+                                    li
+                                        a(href='?m=' + mode + '&c=餐厅' + (keywords ? '&k=' + keywords : '')) 餐厅
+                                    li
+                                        a(href='?m=' + mode + '&c=动物园与水族馆' + (keywords ? '&k=' + keywords : '')) 动物园与水族馆
+                                    li
+                                        a(href='?m=' + mode + '&c=搭船' + (keywords ? '&k=' + keywords : '')) 搭船
+                                    li
+                                        a(href='?m=' + mode + '&c=教育' + (keywords ? '&k=' + keywords : '')) 教育
+                                    li
+                                        a(href='?m=' + mode + '&c=家庭游' + (keywords ? '&k=' + keywords : '')) 家庭游
+                                    li
+                                        a(href='?m=' + mode + '&c=情侣游' + (keywords ? '&k=' + keywords : '')) 情侣游
+                                    li
+                                        a(href='?m=' + mode + '&c=其他' + (keywords ? '&k=' + keywords : '')) 其他
+    else
+        .col-md-1.col-md-offset-1
+    .col-md-8
+        .row.results(data-page=1)
+            a(href='#1')
+                each result in results
+                    .col-md-3.col-sm-4
+                        .thumbnail
+                            if mode == 'destination'
+                                a(href='/destination/' + result.id)
+                                    img(src=(result.media_id.photos[0] || ''))
+                                .caption
+                                    p.text-center
+                                        a(href='/destination/' + result.id)=result.title['cn'] || result.title['en']
+                                        if user && !user.is_guide && !user.is_admin
+                                            a.btn.btn-primary.add-btn(data-pid=result.id) 添加景点
+                            else
+                                a(href='/guide/' + result.id)
+                                    if result.media_id
+                                        img(src=(result.media_id.photos[0] || ''))
+                                .caption
+                                    p.text-center
+                                        a(href='/guide/' + result.id)= result.username
+                                        div= result.description ? result.description.substr(0, 50) + '...' : ''
+                if !results.length
+                    br
+                    br
+                    .text-danger.text-center 未找到结果。
+                        br
+                        br
+                        br
+                        a.btn.btn-primary(onclick='javascript:history.back()') 回去
+        br
+        br
+        br
+    script.
+
+        var previousOffset;
+
+        $('#stage').mousewheel(function (event) {
+            /*console.log('Back: ' + (window.pageYOffset == 0 && event.deltaY > 70));
+            console.log('Forward: ' + (window.pageYOffset > (window.innerHeight - 70) && event.deltaY < -70));
+
+
+            console.log($(document).height() + '                '  + window.pageYOffset);*/
+
+
+            // Next results
+            if (window.pageYOffset == previousOffset && event.deltaY < -50) {
+
+                $.post('/getresults', {p: $('.results').last().data('page') + 1}, function (data) {
+
+                    $('.results').last().after(data);
+
+                });
+
+
+
+            }
+
+            previousOffset = window.pageYOffset
+        });

@@ -1,0 +1,67 @@
+extends ../layouts/dashboard
+
+- var itemsExist = false;
+
+block dashboard
+    #delete_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='deletetrip')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                form(action='/myplaces/delete' method='POST' name='deletetrip')
+                    .modal-header
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                        h4.modal-title 确认删除
+                    .modal-body
+                        | 你确定你要删除？
+                    .modal-footer
+                        button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                        a.btn.btn-primary#deletetrip(type='submit') 删除
+    .col-md-10.col-md-offset-1
+        h3 购物车
+        a.btn.btn-success(href='/mytrips' style='margin-bottom:10px;') 添加更多的旅行
+        table.table
+            tr
+                th(width='20%') 旅程名称
+                th 总长度
+                th 景点数量
+                th 预估价格
+                th
+            each trip, i in trips
+                if trip.carted && !trip.checked_out
+                    - itemsExist = true;
+                    tr.trip(id=trip.id)
+                        td
+                            if trip.generated
+                                a(href='/mytrips/trip/' + trip.id)= trip.name
+                            else
+                                p= 'Trip ' + (i + 1)
+                        td= (trip.minutes / 60).toFixed(1) + ' 小时'
+                        td= trip.destinations.length
+                        td= '$' + (trip.minutes * 2).toFixed(2)
+                        td
+                            a.btn.btn-sm.btn-warning(href=(trip.generated ? ('/plan/' + trip.id) : '#') disabled=!trip.generated) 旅程计划
+                            button.btn.btn-sm.btn-danger.delete-trip(data-toggle='modal' data-target='#delete_popup' data-delete='/mytrips/delete/' + trip.id + '?r=/cart') 清除
+            if !itemsExist
+                tr
+                    td
+                    td
+                    td
+                    td
+                    td
+        if itemsExist
+            .border-top-line
+                br
+                br
+                div 总金额：$
+                    span#total= (trips.total * 2).toFixed(2)
+                .text-danger 需付押金：$
+                    span#amount= (trips.total * 2 * 0.2).toFixed(2)
+                br
+                a.btn.btn-success(style='height: 39px; width: 22%;' href='/order/review') 支付
+                    i.fa.fa-shopping-basket(style='margin-left: 5px;')
+    script.
+        $(function () {
+            $('.delete-trip').click(function () {
+                $('#deletetrip').attr('href', $(this).data('delete'));
+            });
+        });

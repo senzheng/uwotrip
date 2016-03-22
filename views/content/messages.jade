@@ -1,0 +1,146 @@
+extends ../layouts/dashboard
+
+block dashboard
+    h1(style='font-weight: 600;') 聊天
+    .col-md-5.col-md-offset-1
+        h4#who= target ? '与聊天 ' + target.username : '选择一个用户开始谈话。'
+        hr
+        #inbox
+            ul#conversations(style='padding: 0px; list-style: none;')
+                each message in messages
+                    li.conversation(style='-webkit-box-shadow: 0 3px 2px #777; -moz-box-shadow: 0 3px 2px #777;box-shadow: 0 3px 2px #777; padding: 15px;')
+                        each speaker in message.who
+                            if speaker.id != user.id
+                                a(href='/messages/' + speaker.id)
+                                    .sender='发件人：' + speaker.username
+                                - var lastMessage = message.messages.length ? message.messages[message.messages.length - 1] : null
+                                if lastMessage
+                                    .messagepreview(id=speaker.id)= lastMessage.message.substr(0, 37) + '...'
+                li
+                    br
+                    label(for='find')='开始聊天：'
+                    input#find(type='text' name='find' placeholder="输入收件人的名..." style='width: 54%;')
+                    button.find.btn.btn-primary 确定
+                    .error.text-danger
+    .col-md-5
+        #chatbox
+            input#user(type='hidden' value=target ? target.id : '')
+            #body(style='min-height: 473px; max-height: 473px; min-width: 300px; overflow: auto; border: 6px outset #3C72A9; background-color: rgba(255, 250, 240, 0.48);')
+                if conversation
+                    each message in conversation.messages
+                        div(style='padding: 10px; word-wrap: break-word; text-align: ' + (message.sender.id == user.id ? 'right' : 'left') + '; background-color: ' + (message.sender.id == user.id ? 'floralwhite' : 'cornsilk'))
+                            span= message.sender.username + ' ('
+                            span.display-date= message.timestamp
+                            span= '):'
+                            br
+                            div= message.message
+            br
+            div#send
+                input#message(type='text' name='talk' placeholder='发送一个消息...' style='width: 74%;' disabled=target ? false : true)
+                button.btn.btn-primary.send(disabled=target ? false : true) 发送
+            br
+    script.
+        $(function () {
+
+            var body = $('#body');
+
+            var message = $('#message');
+
+            var me = '#{user.id}';
+
+            var socket = io.connect();
+
+            socket.on('connect', function () {
+
+                socket.emit('join', {
+                    id: '#{user.id}'
+                });
+
+                socket.on('new', function (result) {
+                    var preview = $('#' + result.target + '.messagepreview');
+
+                    preview.text(result.message.substr(0, 37) + '...');
+
+                    var div = '<div class="display-date" style="padding: 10px; word-wrap: break-word; text-align: ' + (me == result.sender ? 'right' : 'left') + '; background-color: ' + (me == result.sender ? 'floralwhite' : 'cornsilk') + ';"><span>' + (result.sender == me ? '#{user.username}' : '#{target ? target.username : ""}') + ' (' + moment(result.timestamp).format('YYYY-MM-DD hh:mm:ss A') + '):</span><br>' + result.message + '</div>';
+
+                    body.append(div);
+
+                    body.animate({
+                        scrollTop: 1000000
+                    }, 'slow');
+
+                    message.val('');
+
+                    setTimeout(function () {
+                        message.focus();
+                    }, 0);
+
+                });
+
+            });
+
+            var send = function () {
+                var content = message.val();
+
+                if (content.length < 1) {
+                    return false;
+                }
+
+                message.attr('disabled', true);
+                $('.send').attr('disabled', true);
+
+                $.post('/send', {id: $('#user').val(), message: content}, function (result) {
+                    if (result.success) {
+
+
+                    }
+
+                    message.attr('disabled', false);
+                    $('.send').attr('disabled', false);
+
+                    $('.error').text(result.message);
+                });
+            };
+
+            $('.send').click(function () {
+                send();
+            });
+
+            $('#message').keypress(function (e) {
+                if (e.which == 13) {
+                    send();
+                }
+            });
+
+            var find = function () {
+                $.post('/messages/find', {id: $('#find').val()}, function (result) {
+
+                    if (result.success) {
+
+                        window.location = '/messages/' + result.id;
+
+                    }
+
+                    $('.error').show().text(result.message).fadeOut(5000);
+
+                });
+            };
+
+
+            $('.find').click(function () {
+
+                find();
+
+            });
+
+            $('#find').keypress(function (e) {
+                if (e.which == 13) {
+                    find();
+                }
+            });
+
+            body.animate({
+                scrollTop: 1000000
+            }, 'slow');
+
+        });

@@ -1,0 +1,32 @@
+extends ../layouts/master
+
+block content
+    // CONTENT
+    // slides
+    iframe(style='border:none; min-height: 100%; min-width: 100%; position: absolute; bottom: 63px;', src='assets/home-slides/home-slides-4.html')
+    // SOCIAL
+    .container-fluid
+        nav#social-sidebar
+            ul
+                li
+                    a#facebook.facebook(href='#')
+                        i.fa.fa-lg.fa-facebook
+                li
+                    a#twitter.twitter(href='#')
+                        i.fa.fa-lg.fa-twitter
+                li
+                    a#instagram.instagram(href='#')
+                        i.fa.fa-lg.fa-instagram
+                li
+                    a#weibo.weibo(href='#')
+                        i.fa.fa-lg.fa-weibo
+                li
+                    a#wechat.wechat(href='#')
+                        i.fa.fa-lg.fa-wechat
+    // WECHAT MODAL
+    .modal.fade(tabindex='-1', role='dialog-sm', aria-labelledby='log_in')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                .modal-body
+                    img(src='')
+                    a(href='../_cn/forgot_password.html') 忘记登录密

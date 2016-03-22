@@ -1,0 +1,54 @@
+extends ../layouts/dashboard
+
+block dashboard
+    h2 景点管理
+    #delete_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='deletedestination')
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                form#deleteform(action='/destination/delete' method='POST' name='deletedestination')
+                    input#id(type='hidden' name='id')
+                    .modal-header
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                        h4.modal-title 确认删除
+                    .modal-body
+                        | 你确定你要删除？
+                    .modal-footer
+                        button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                        button.btn.btn-primary#deletedestination(type='submit') 删除
+    table.table
+        tbody
+            tr
+                th
+                th 名称
+                th 状态
+                th 发布日期
+                th
+                if destinations.length
+                    each destination in destinations
+                        tr
+                            td
+                                if destination.media_id.photos
+                                    a(href='/destination/' + destination.id)
+                                        img.meadi(src=destination.media_id.photos[0] || '' width='70', height='69')
+                            td
+                                a(href='/destination/' + destination.id)= destination.title['cn']
+                            td= destination.is_hidden ? '审核中' : '批准'
+                            td.display-date= destination.post_date
+                            td
+                                a.btn.btn-warning(href='/destination/edit/' + destination.id)= '编辑'
+                                button.btn.btn-danger.delete(data-toggle='modal' data-target='#delete_popup' data-destination=destination.id)= '删除'
+            tr
+                td(align='right', colspan='5')
+                    a.btn.btn-sm.btn-success(href='/destination/create') 创建景点
+    script.
+        $(function () {
+
+            $('.delete').click(function () {
+
+                $('#id').val($(this).data('destination'));
+
+            });
+
+
+        });

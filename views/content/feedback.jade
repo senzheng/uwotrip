@@ -1,0 +1,38 @@
+extends ../layouts/master
+
+block content
+    .row
+        .form-group.col-md-6.col-md-offset-3.col-sm-offset-3
+            h3.page-header 网站回馈
+    .form-horizontal
+        .form-group
+            label.col-md-offset-1.col-sm-2.control-label(for='email') 邮箱
+            .col-sm-6
+                input#email.form-control(type='email', placeholder='邮箱')
+        .form-group
+            label.col-md-offset-1.col-sm-2.control-label(for='subject') 主题
+            .col-sm-6
+                input#subject.form-control(type='text', placeholder='主题')
+        .form-group
+            label.col-md-offset-1.col-sm-2.control-label(for='feedback') 您的回馈
+            .col-sm-6
+                textarea.form-control#feedback(placeholder='您的回馈', rows='8')
+        .form-group
+            .col-sm-offset-3.col-sm-10
+                button.btn.btn-primary#submit(type='submit') 发送
+    script.
+        $('#submit').click(function () {
+
+            $.post('/feedback', {
+                email: $('#email').val(),
+                subject: $('#subject').val(),
+                message: $('#feedback').val()
+            }, function (result) {
+
+                if (result.success) {
+                    window.location = '/';
+                }
+
+            });
+
+        });

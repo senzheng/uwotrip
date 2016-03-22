@@ -1,0 +1,431 @@
+extends ../layouts/master
+
+block content
+    .container-fluid.m-l-25
+        h3.col-md-12.page-header.pull-left TRIP REQUIREMENT
+            span
+                small  CHECKOUT
+        .row
+            .col-md-4.checkout-info-text
+                | Please fill in the fields below and click "" to finish your order.
+            .col-md-5.col-sm-offset-3.col-sm-3.pull-right(style='margin-bottom: 20px;')
+                span#message.text-primary
+                button#change.btn.btn-default.change-trip-btn.trip-header-btn(style='float: right;' type='button' data-tid=trip_id) CHANGE
+                button#cancel.btn.btn-danger.cancel-trip-btn.trip-header-btn(style='float: right;' type='button' data-tid=trip_id) CANCEL
+                button#tripDEtails.btn.btn-info.show-trip-btn.trip-header-btn(style='float: right;' type='button' data-tid=trip_id) TRIP DETAILS
+                button#confirm.btn.btn-success.confirm-trip-btn.trip-header-btn(style='float: right;' type='button' data-tid=trip_id) CONFIRM
+        .row 
+            form#generateform.form-horizontal
+                .col-md-4.generate-form-col
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='address1') STARTING ADDRESS:
+                        .col-sm-11
+                            input#address1.form-control.required(type='text' placeholder='地址1' name='address1' required)
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='address2') ENDING ADDRESS:
+                        .col-sm-11
+                            input#address2.form-control(type='text' placeholder='地址2' name='address2')
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='people_number') NUMBER OF PEOPLE
+                        .col-sm-11
+                            input#people_number.form-control.required(type='number' placeholder='旅行名字' name='people_number' required)
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='city') STARTING TIME:
+                        .col-sm-11
+                            input.datepicker.form-control(data-provide="datepicker")
+
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='state') PRICING:
+                        .col-sm-12
+                            .row
+                                .col-sm-6 Official Guide rate:
+                                .col-sm-5 $140
+                            .row
+                                .col-sm-6 Official Guide need:
+                                .col-sm-5
+                                    select#guideNeed.form-control(name='guide' required)
+                                        option 1
+                                        option 2
+                                        option 3
+                                        option 4 
+                                        option 5
+                            .row
+                                .col-sm-6 Driver/Official Guide Trips:
+                                .col-sm-5 $3 per Tourist per day
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='zip') SUGGESTION LIST:
+                        .col-sm-9 15 Tourists or below: 0 person/ driver be the Official Guide
+                        .col-sm-9 15 Tourists above: 1 person or more
+
+                .col-md-4.generate-form-col#midtable.vehicle-select-col.p-d-25
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='address1') VEHICLE TYPE:
+                        .col-sm-12
+                            select#tripname.form-control(name='tripname' required)
+                                option(value="1") 7 Seats - $400/day
+                                option(value="2") 15 Seats -$450/day
+                                option(value="3") 23 Seats - $550/day
+                                option(value="4") 34 Seats - $650/day
+                                option(value="5") 55 Seats - $800/day
+
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-6.control-label(for='address1') HOTEL LEVEL:
+                        .col-sm-12
+                            select#address1.col-sm-12.form-control(name='address1' required)
+                                option(value="1") 1 star - Unavailable
+                                option(value="2") 2 stars - $71/night
+                                option(value="3") 3 stars - $81/night
+                                option(value="4") 4 stars - $99/night
+                                option(value="5") 5 stars - Unavailable
+
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label(for='address1') HOTEL:
+                        label.col-sm-3 Night 1:
+                        .col-sm-9.m-b-10
+                            input#address2.form-control(type='text' placeholder='地址2' name='address2')
+                            input#address2.form-control(type='text' placeholder='地址2' name='address2')
+                            input#address2.form-control(type='text' placeholder='地址2' name='address2')
+                        small.col-sm-12.m-t-10
+                            i.fa.fa-plus-circle.fa-lg.m-r-20
+                            | Add Night
+
+                //- the third column
+                .col-md-4.generate-form-col.cost-select-col(style='background-color: #D0D0D0; padding-right: 20px;')
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label(for='tripname') Official Guide:
+                        .col-sm-12
+                            label 1 David Liu (place Holder from backend)
+                            label 2 David Liu (place Holder from backend)
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label(for='address1') Local Guide:
+                        .col-sm-12
+                            label.d-b Day 1:
+                            |Disney: David Liu
+                            button.btn.btn-default(type='button') Chat
+                            button.btn.btn-default(type='button') Request Change
+                            
+                            label.d-b Day 2:
+                            |Disney: David Liu
+                            button.btn.btn-default(type='button') Chat
+                            button.btn.btn-default(type='button') Request Change
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label(for='address2') ADDITIONAL COST:
+                        .col-sm-12
+                            select#guideNeed.form-control(name='guide' required)
+                                option 1
+                                option 2
+                                option 3
+                                option 4
+                                option 5
+                    .form-group
+                        label.visible-md.visible-lg.col-sm-12.control-label(for='city') ADD NEW COST
+                        .col-sm-12.m-b-10
+                            input#city.form-control.required(type='text' placeholder='城市' name='city' required)
+                        small.col-sm-12
+                            i.fa.fa-plus-circle.fa-lg.m-r-20
+                            | Add Cost
+                    hr
+                    .form-group
+                        span.d-b.col-sm-12 TOTAL VEHICLE COST:
+                            b $1600
+                        span.d-b.col-sm-12 TOTAL OFFICIAL GUIDE COST:
+                            b $560
+                        span.d-b.col-sm-12 TOTAL LOCAL GUIDE COST:
+                            b $560
+                        span.d-b.col-sm-12 TOTAL TIPS:
+                            b $560
+                    hr
+                    br
+                    br
+        #generated.row.hidden
+            h4.col-md-12 路线生成结果
+            .col-md-12
+                table.table
+                    tr
+                        td= '节日名称: '
+                            span.trip-name
+                        td
+                div(style='float: right;')
+                    button#print.btn.btn-info 打印此页
+                        i.fa.fa-print(style='margin-left: 5px;')
+                    a.trip-details.btn.btn-primary(href='/mytrips/trip/' + trip_id) 旅程细节
+                    a.plan-trip.btn.btn-warning(href='/plan/' + trip_id) 旅程计划
+                    button.btn.btn-success#add_cart 加入购物车
+            br
+            br
+            br
+            br
+            #gmap-route(style='top: 30px; height: 380px; width: 100%;padding: 3px;border: 5px solid #ddd;font-size: 90%;')
+            br
+            br
+            h2
+                | 距离
+                strong#mi
+            #route(style='margin-bottom: 50px; top: 40px; position: relative;')
+            img#printimage.hidden
+        // Trip Map Modal
+        #mapModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='trippreview')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                        h4#myModalLabel.modal-title Trip Preview
+                    .modal-body
+                        //img(width='100%' src='http://mt0.googleapis.com/maps/vt?pb=!1m5!1m4!1i13!2i1310!3i3166!4i256!2m3!1e0!2sm!3i333221100!3m9!2sen-US!3sUS!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=85659')
+    script.
+        $(function () {
+            var modes = ['requirement', 'edit', 'summary'];
+            var currentMode = 'requirement';
+
+            function changeStateForRequestState(){
+                $('.trip-header-btn').hide();
+                $('.cancel-trip-btn').show();
+                $('.confirm-trip-btn').show();
+                $('.vehicle-select-col input').attr('disabled', "disabled"); 
+                $('.cost-select-col input').attr('disabled', "disabled"); 
+                $('.vehicle-select-col select').attr('disabled', "disabled"); 
+                $('.cost-select-col select').attr('disabled', "disabled"); 
+                currentMode = 'requirement';
+            }
+
+            function changeStateForEditState(){
+                $( ".page-header" ).html( "TRIP EDIT" );
+                $('.trip-header-btn').hide();
+                $('.confirm-trip-btn').show();
+                $('.vehicle-select-col input').prop("disabled", false); ; 
+                $('.cost-select-col input').prop("disabled", false);  
+                $('.vehicle-select-col select').prop("disabled", false);  
+                $('.cost-select-col select').prop("disabled", false);
+                currentMode = 'edit';
+            }
+
+            function changeStateForSummaryState(){
+                currentMode = 'summary';
+                $( ".page-header" ).text( "TRIP SUMMARY" );
+                $('.trip-header-btn').show();
+                $('.vehicle-select-col input').attr('disabled', "disabled"); 
+                $('.cost-select-col input').attr('disabled', "disabled"); 
+                $('.vehicle-select-col select').attr('disabled', "disabled"); 
+                $('.cost-select-col select').attr('disabled', "disabled"); 
+            }
+
+            changeStateForRequestState();
+
+            $('.confirm-trip-btn').click(function(){
+                if (currentMode == 'requirement'){
+                    changeStateForEditState();
+                } else if (currentMode == 'edit'){
+                    changeStateForSummaryState();
+                } else{
+
+                }
+            });
+
+            /* $('.confirm-trip-btn').click(function () {
+                    changeStateForEditState();
+            }); */
+
+            $('.datepicker').datetimepicker();
+
+            $(".generate-form-col").matchHeight();
+
+            $('#add_cart').click(function () {
+                var that = $(this);
+
+                that.attr('disabled', true);
+
+                $.post('/cart/add', {tid: '#{trip_id}'}, function (result) {
+                    if (result.success) {
+                        window.location = '/cart';
+                    }
+
+                    that.attr('disabled', false);
+                });
+            });
+
+            var generate = function (button) {
+                var that = $(button);
+
+                that.attr('disabled', true);
+
+                var address1 = $('#address1').val();
+                var address2 = $('#address2').val();
+                var city = $('#city').val();
+                var state = $('#state').val();
+                var zip = $('#zip').val();
+                var people = $('#people').val();
+
+                var address = (address1.length ? address1 + ' ' : '') +
+                        (address2.length ? address2 + ' ' : '') +
+                        (city.length ? city + ' ' : '') +
+                        (state.length ? state + ' ' : '') +
+                        (zip.length ? zip : '');
+
+                $.post('/mytrips/generate', {
+                    tid: that.data('tid'),
+                    trip_name: $('#tripname').val(),
+                    start_time: moment.utc($('#starttime').val()).format('YYYY-MM-DD HH:mm'),
+                    start_address: address,
+                    people: people
+                }, function (result) {
+                    if (result.success) {
+                        $('.trip-name').text(result.trip.name);
+                        var table = $('.table');
+                        var addresses = []
+
+                        result.trip.destinations.forEach(function (destination, index) {
+                            table.append('<tr><td>' + (index + 1) + '<span class="list-indent"><strong>' + destination.name + '</strong> ' + (destination.minutes / 60).toFixed(2) + ' 小时' + '</span></td><td></td></tr>');
+                            addresses.push(destination.address);
+                        });
+
+                        var googleGeocoder = new GeocoderJS.createGeocoder({
+                            'provider': 'google'
+                        });
+
+                        var LocsD = [];
+
+                        var geocodeAddresses = function (addresses) {
+                            googleGeocoder.geocode(addresses[0], function (result) {
+
+                                LocsD.push({
+                                    lat: result[0].latitude,
+                                    lon: result[0].longitude,
+                                    title: '',
+                                    html: '',
+                                    stopover: true
+                                });
+
+                                addresses = addresses.splice(1, addresses.length - 1);
+
+                                if (addresses.length) {
+                                    geocodeAddresses(addresses);
+                                } else {
+                                    new Maplace({
+                                        locations: LocsD,
+                                        map_div: '#gmap-route',
+                                        generate_controls: false,
+                                        show_markers: false,
+                                        type: 'directions',
+                                        draggable: true,
+                                        directions_panel: '#route',
+                                        afterRoute: function (distance) {
+                                            $('#mi').text(': ' + ((distance / 1000) * .6214).toFixed(2) + ' 英里');
+                                        }
+                                    }).Load();
+                                }
+                            });
+                        };
+
+                        geocodeAddresses(addresses);
+
+                        $('#generated').removeClass('hidden');
+
+
+                    } else {
+                        that.attr('disabled', false);
+                    }
+
+                    $('#message').text(result.message);
+                });
+            };
+
+            $('#generateform').validate({
+                rules: {
+                    tripname: {
+                        required: true,
+                        minlength: 5
+                    },
+                    address1: {
+                        required: true,
+                        minlength: 5
+                    },
+                    city: {
+                        required: true,
+                        minlength: 5
+                    },
+                    state: {
+                        required: true,
+                        minlength: 2
+                    },
+                    zip: {
+                        required: true,
+                        digits: true
+                    },
+                    people: {
+                        required: true,
+                        digits: true
+                    },
+                    starttime: {
+                        required: true
+                    }
+                },
+                messages: {
+                    tripname: {
+                        required: '输入您的行程的名字。',
+                        minlength: '你的名字是太短了。'
+                    },
+                    address1: {
+                        required: '请输入您的地址。',
+                        minlength: '您的地址是太短了。'
+                    },
+                    city: {
+                        required: '请输入您的城市。',
+                        minlength: '你的城市名称太短。'
+                    },
+                    state: {
+                        required: '输入您的省份。',
+                        minlength: '贵国是太短了。'
+                    },
+                    zip: {
+                        required: '输入您的邮政编码。',
+                        digits: '邮编只能包含数字。'
+                    },
+                    people: {
+                        required: '进入人量。',
+                        digits: '量人只能包含数字。'
+                    },
+                    starttime: {
+                        required: '输入开始日期。'
+                    }
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass('has-error');
+                },
+                errorElement: 'span',
+                errorClass: 'help-block',
+                errorPlacement: function (error, element) {
+                    if (element.parent('.input-group').length) {
+                        error.insertAfter(element.parent());
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $('#generate').on('click', function (event) {
+                event.preventDefault();
+
+                if ($('#generateform').valid()) {
+                    generate(this);
+                }
+
+                return false;
+            });
+
+            $('#print').click(function () {
+                $('#stage').html2canvas({
+                    onrendered: function (canvas) {
+                        $('#printimage').attr('src', canvas.toDataURL("image/png")).removeClass('hidden');
+                        $("#printimage").printThis();
+                        setTimeout(function () {
+                            $("#printimage").addClass('hidden');
+                        }, 3000);
+                    }
+                });
+            });
+
+        });

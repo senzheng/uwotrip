@@ -1,0 +1,172 @@
+extends ../layouts/dashboard
+
+block dashboard
+    h3 订单分配
+    .col-md-9
+        each order in orders
+            .order(id=order.id)
+                .border-top-line
+                    .order(id=order.id style='display: inline-block;')= '订购： '
+                        span(style='text-transform: uppercase;')= order.id
+                    div= '已支付： $'
+                        span= (order.paid / 100).toFixed(2)
+                    div= '当前余额： $'
+                        span= order.estimate
+                    div= '操作者：'
+                        span= order.operator.username
+                table
+                    tbody
+                        tr
+                            th 旅程名称
+                            th 长度（小时)
+                            th 价格
+                            each trip, i in order.trips
+                                tr
+                                tr
+                                    td
+                                        a(href='/orders/trip/' + trip.id)= trip.name
+                                    td= (trip.minutes / 60).toFixed(1)
+                                    td= '$' + parseFloat(trip.estimate).toFixed(2)
+                                    tr
+                                        th
+                                        th 景点名称
+                                        th 长度（小时)
+                                        th 价格
+                                        th 参加人数
+                                        th 支付状态
+                                        th 订单状态
+                                        th 向导
+                                each day, j in trip.days
+                                    each waypoint, k in day
+                                        each destination in trip.destinations
+                                            if waypoint.destination_id == destination._id
+                                                tr
+                                                    td
+                                                        img(src=destination.destination_id && destination.destination_id.media_id ? destination.destination_id.media_id.photos[0] : 'http://www.davidluke.com/wp-content/themes/david-luke/media/ims/placeholder720.gif' width=32 height=32)
+                                                    td
+                                                        strong
+                                                            if destination.destination_id
+                                                                a(href='/destination/' + destination.destination_id.id)= destination.name
+                                                            else
+                                                                span= destination.name
+                                                    td= (destination.minutes / 60).toFixed(1)
+                                                    td= destination.destination_id ? '$' + (destination.minutes * 2).toFixed(2) : '$0.00'
+                                                    td= destination.people || 'N/A'
+                                                    if destination.destination_id
+                                                        td= waypoint.payment_status || order.payment_status || '押金'
+                                                        td= waypoint.order_status || order.order_status || '等待分配'
+                                                        td.guidename= waypoint.guide || '等待分配'
+                                                        td
+                                                            input(type='hidden' name='destination_id' value=waypoint.destination_id)
+                                                            img.droppable(src='/img/drag.png' width='100' height='100')
+                br
+        if !orders.length
+            .text-danger.text-center 没有订单签出。
+            br
+            br
+    .col-md-3
+        #guiderow.hidden
+            img.draggable.image(src='' width='100' height='100' style='margin-right: 20px; z-index: 1;')
+            span.username
+            input(type='hidden' name='guide_id')
+            br
+            br
+        table.table
+            h2 联系指南
+            br
+            input#guidesearch(type='search' style='width: 100%;' placeholder='搜索指南')
+            br
+            br
+            #guideresults
+                each guide in guides
+                    #guiderow
+                        img.draggable.image(src=guide.media_id && guide.media_id.photos[0] ? guide.media_id.photos[0] : '' width='100' height='100' style='margin-right: 20px; z-index: 1;')
+                        span.username= guide.username
+                        input(type='hidden' name='guide_id' value=guide.username)
+                        br
+                        br
+    script.
+        $(function () {
+
+            var refreshDragDrop = function () {
+                $('.draggable').draggable({
+                    helper: 'clone'
+                });
+
+                $(".droppable").droppable({
+                    drop: function (event, ui) {
+
+                        var that = $(this);
+
+                        that.parents('tr').find('.guide').text(ui.draggable.parent().find('.username').text());
+                        that.attr('src', ui.draggable.attr('src'));
+
+                        var guide_id = ui.draggable.parent().find('[name=guide_id]').val();
+                        var destination_id = that.parent().find('[name=destination_id]').val();
+                        var order_id = that.parents('.order').attr('id');
+
+                        $.post('/assignorders', {
+                            destination: destination_id,
+                            guide: guide_id,
+                            order: order_id
+                        }, function (result) {
+                            if (result.success) {
+                                that.parents('tr').find('.guidename').text(guide_id);
+                            }
+                        });
+
+                    }
+                });
+            };
+
+            $('#guidesearch').focus();
+
+            var guiderow = $('#guiderow');
+
+            var restart;
+
+            $('#guidesearch').on('input', function () {
+
+                if (restart) {
+                    clearTimeout(restart);
+                }
+
+                var keyword = this.value;
+
+                restart = setTimeout(function () {
+                    $.post('/searchguides', {
+                        keyword: keyword
+                    }, function (result) {
+
+                        if (result.success) {
+
+                            $('#guideresults').html('');
+
+                            result.guides.forEach(function (guide, i) {
+
+                                var row = guiderow.clone();
+
+                                row.removeClass('hidden');
+
+                                row.find('[name=guide_id]').val(guide._id);
+
+                                row.find('.username').text(guide.username);
+
+                                row.find('.image').attr('src', guide.media_id && guide.media_id.photos[0] ? guide.media_id.photos[0] : '');
+
+                                $('#guideresults').append(row);
+
+                            });
+
+                            refreshDragDrop();
+
+                        }
+
+                    });
+                }, 500);
+
+            });
+
+            refreshDragDrop();
+
+        });

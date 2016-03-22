@@ -1,0 +1,32 @@
+extends ../layouts/master
+
+block content
+    .container-fluid
+        .col-md-3.col-md-offset-2
+            .col-md-12.col-sm-6.col-xs-6
+                h3= guide.username
+                if guide.media_id
+                    img(src=(guide.media_id.photos[0] || '') style='width: 100%;')
+                    br
+                table.table
+                    tbody
+                        col(width='75px')
+                        tr
+                            td 名字
+                            td= guide.first_name
+                        tr
+                            td 姓
+                            td= guide.last_name
+        br
+        br
+        .col-md-5
+            if guide.introduction
+                h4 介绍
+                p= guide.introduction
+            if guide.description
+                h4 描述
+                p= guide.description
+    br
+    br
+    br
+    br

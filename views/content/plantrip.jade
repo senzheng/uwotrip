@@ -1,0 +1,404 @@
+extends ../layouts/master
+
+block content
+    #plantrip
+        #edit_popup.modal.fade(tabindex='-1' role='dialog-sm' aria-labelledby='editdestination')
+            .modal-dialog.modal-sm(role='document' style='width: 550px;')
+                .modal-content
+                    form#edit_destination
+                        .modal-header
+                            button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                span(aria-hidden='true') ×
+                            h4#log-in.modal-title 编辑景点
+                        .modal-body(style='height: 400px;')
+                            form.form-horizontal
+                                #edit_body
+                        .modal-footer
+                            button.btn.btn-default(type='button' data-dismiss='modal') 取消
+                            button.btn.btn-primary#save_destination(type='button') 编辑
+        .container-fluid(style='background-color: #000;')
+            h2(style='color: white;') 计划您的行程
+            br
+            .row(style='border: 1px solid #777777; margin: 0px;')
+                .col-md-6
+                    h3(style='color: white;')
+                        strong 景点
+                    br
+                    .inventory.hidden(style='border: 1px solid #ddd;')
+                        button.edit.btn.btn-warning(style='height: 39px; width: 60%;' data-toggle='modal' data-target='#edit_popup')
+                        button.btn.btn-info.fa.fa-caret-square-o-right.move-right(style='height: 39px; width: 16%;font-size: 28px;')
+                        a.btn.fa.fa-times.delete-destination(style='width: 12%; font-size: 32px;text-align: center;vertical-align: middle;')
+                    #destinations(style='background-color: #1E1E2F; text-align: center; padding: 5px;')
+                        each destination in trip.destinations
+                            div(id=destination.id style='border: 1px solid #ddd;')
+                                button.edit.btn.btn-warning(style='height: 39px; width: 60%;' data-toggle='modal' data-target='#edit_popup')= destination.name || destination.destination_id.title['cn']
+                                button.btn.btn-info.fa.fa-caret-square-o-right.move-right(style='height: 39px; width: 16%;font-size: 28px;')
+                                if !destination.cant_delete
+                                    a.btn.fa.fa-times.delete-destination(style='width: 12%; font-size: 32px;text-align: center;vertical-align: middle;')
+                    br
+                    button#add_destination.btn.btn-success(style='height: 39px; width: 26%;' data-toggle='modal' data-target='#edit_popup') 添加景点
+                    br
+                    br
+                .col-md-6
+                    h3(style='color: white;')
+                        strong 日程安排
+                    br
+                    .attraction.template.hidden(style='background-color: #1E1E2F; text-align: center;')
+                        button.edit.btn.btn-warning(style='height: 55px;width: 62%;' data-toggle='modal' data-target='#edit_popup')
+                        .btn-group-vertical
+                            button.btn.btn-info.fa.fa-caret-square-o-up.up(type='button')
+                            button.btn.btn-info.fa.fa-caret-square-o-down.down(type='button')
+                        a.btn.fa.fa-times.delete-attraction(style='width: 7%; font-size: 32px;text-align: center;vertical-align: middle;')
+                    #days(style='background-color: #010025; margin-top: 1px;')
+                        each day, i in trip.days
+                            .day(data-day=(i+1) style="border: 1px solid #ddd; min-height: 90px; padding: 10px;")
+                                .day-number='第' + (i+1) + '天'
+                                    each dayDestination in day
+                                        each destination in trip.destinations
+                                            if destination.id == dayDestination
+                                                .attraction(id=dayDestination style='background-color: #1E1E2F; text-align: center;')
+                                                    button.edit.btn.btn-warning(style='height: 55px; width: 62%;' data-toggle='modal' data-target='#edit_popup')= destination.name
+                                                    .btn-group-vertical
+                                                        button.btn.btn-info.fa.fa-caret-square-o-up.up(type='button')
+                                                        button.btn.btn-info.fa.fa-caret-square-o-down.down(type='button')
+                                                    a.btn.fa.fa-times.delete-attraction(style='width: 7%; font-size: 32px;text-align: center;vertical-align: middle;')
+                    br
+                    button#add_day(style='height: 39px; width: 28%;')= '增加一天 '
+                        i.fa.fa-plus-square
+                    button#delete_day(style='height: 39px; width: 28%;')= '删除一天 '
+                        i.fa.fa-minus-square
+                    br
+                    br
+                    br
+                    #message.text-danger.text-center
+                    .border-top-line
+                        button#save_trip.btn.btn-primary(style='height: 39px; width: 22%;' disabled=true) 保存
+                        button#add_cart.btn.btn-danger(style='height: 39px; width: 33%;') 加入购物车
+                        input#trip_id(type='hidden' value=trip.id)
+            .row(style='height: 110px;')
+        .destination.template.hidden
+            input#did(type='hidden' value='')
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='name') 名称
+                .col-sm-8
+                    input#name.form-control(type='text' placeholder='名称' name='name')
+                    br
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='minutes') 分钟
+                .col-sm-8
+                    input#minutes.form-control(type='text' placeholder='分钟' name='minutes')
+                    br
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='address') 地址
+                .col-sm-8
+                    input#address.form-control(type='text' placeholder='地址' name='address')
+                    br
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='people') 参加人数
+                .col-sm-8
+                    input#people.form-control(type='number' placeholder='参加人数' name='people')
+                    br
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='start_time') 开始时间
+                .col-sm-8
+                    input#start_time.form-control.input-date(type='datetime-local' placeholder='开始时间' name='start_time')
+                    br
+            .form-group
+                label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='end_time') 结束时间
+                .col-sm-8
+                    input#end_time.form-control.input-date(type='datetime-local' disabled=true placeholder='结束时间' name='end_time')
+        each destination in trip.destinations
+            .destination.hidden(id=destination.id)
+                input#did(type='hidden' value=destination.id)
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='name') 名称
+                    .col-sm-8
+                        input#name.form-control(type='text' placeholder='名称' name='name' value=destination.name)
+                        br
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='minutes') 分钟
+                    .col-sm-8
+                        input#minutes.form-control(type='text' placeholder='分钟' name='minutes' value=destination.minutes)
+                        br
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='address') 地址
+                    .col-sm-8
+                        input#address.form-control(type='text' placeholder='地址' name='address' value=destination.address)
+                        br
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='people') 参加人数
+                    .col-sm-8
+                        input#people.form-control(type='number' placeholder='参加人数' name='people' value=destination.people)
+                        br
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='start_time') 开始时间
+                    .col-sm-8
+                        input#start_time.form-control.input-date(type='datetime-local' placeholder='开始时间' name='start_time' value=destination.start_time)
+                        br
+                .form-group
+                    label.visible-md.visible-lg.col-md-offset-1.col-sm-2.control-label(for='end_time') 结束时间
+                    .col-sm-8
+                        input#end_time.form-control.input-date(type='datetime-local' disabled=true placeholder='结束时间' name='end_time' value=destination.end_time)
+    script.
+        $(function () {
+            $('html').css('background-color', 'black');
+
+            $('#days').bind('DOMSubtreeModified', function () {
+                $('#save_trip').attr('disabled', false);
+                $('#add_cart').attr('disabled', true);
+            });
+
+            $('#save_trip').click(function () {
+                var that = $(this);
+
+                that.attr('disabled', true);
+
+                var daysNum = $($('#days .attraction')[$('#days .attraction').length-1]).parents('.day').data('day');
+
+                var data = {tid: $('#trip_id').val(), days: []};
+
+                for (var i = 0 ; i < daysNum ; i++) {
+                    data.days.push([]);
+                }
+
+                $('#days .attraction').each(function(element){
+                    var day = $(this);
+                    data.days[day.parents('.day').data('day') - 1].push(day.attr('id'));
+                });
+
+                $.post('/plan/trip/save', data, function (result) {
+                    if (result.success) {
+                        $('#add_cart').attr('disabled', false);
+                    } else {
+                        that.attr('disabled', false);
+                    }
+
+                    $('#message').text(result.message).show().fadeOut(5000);
+                });
+            });
+
+            $('#add_cart').click(function () {
+                var that = $(this);
+
+                that.attr('disabled', true);
+
+                $.post('/cart/add', {tid: $('#trip_id').val()}, function (result) {
+                    if (result.success) {
+                        window.location = '/cart';
+                    }
+
+                    that.attr('disabled', false);
+                });
+            });
+
+            $('#edit_popup').on('click', '#save_destination', function () {
+                event.preventDefault();
+
+                var that = $(this);
+
+                if (!$('#edit_destination').valid()) {
+                    return false;
+                }
+
+                that.attr('disabled', true);
+
+                var parent = that.parents('.modal-content');
+
+                var data = {};
+
+                data.tid = $('#trip_id').val();
+                data.id = parent.children('form').find('#did').val();
+                data.name = parent.children('form').find('#name').val();
+                data.minutes = parent.children('form').find('#minutes').val();
+                data.address = parent.children('form').find('#address').val();
+                data.people = parent.children('form').find('#people').val();
+                data.start_time = moment.utc(parent.children('form').find('#start_time').val()).format('YYYY-MM-DD HH:mm');
+                data.end_time = moment.utc(parent.children('form').find('#end_time').val()).format('YYYY-MM-DD HH:mm');
+
+                $.post('/plan/destination/save', data, function (result) {
+                    if (result.success) {
+                        if (!data.id) {
+                            parent.children('form').find('#did').attr('value', result.destination._id);
+
+                            var newDestination = $($('.destination.template.hidden').clone().attr('id', result.destination._id).removeClass('template')[0].outerHTML);
+                            newDestination.find('#name').attr('value', result.destination.name);
+                            newDestination.find('#minutes').attr('value', result.destination.minutes);
+                            newDestination.find('#address').attr('value', result.destination.address);
+                            newDestination.find('#people').attr('value', result.destination.people);
+                            newDestination.find('#start_time').attr('value', result.destination.start_time);
+                            newDestination.find('#end_time').attr('value', result.destination.end_time);
+                            $('.destination.hidden').last().append(newDestination);
+
+                            var newInventory = $('.inventory.hidden').clone().attr('id', result.destination._id).removeClass('hidden').removeClass('inventory');
+                            newInventory.find('[data-toggle=modal]').text(result.destination.name);
+
+                            $('#destinations').children().last().append(newInventory[0].outerHTML);
+                        } else {
+                            var realDestination = $('#' + result.destination._id + '.destination');
+                            realDestination.find('#name').attr('value', result.destination.name);
+                            realDestination.find('#minutes').attr('value', result.destination.minutes);
+                            realDestination.find('#address').attr('value', result.destination.address);
+                            realDestination.find('#people').attr('value', result.destination.people);
+                            realDestination.find('#start_time').attr('value', result.destination.start_time);
+                            realDestination.find('#end_time').attr('value', result.destination.end_time);
+
+                            $('#destinations').children('#' + result.destination._id).find('.edit').text(result.destination.name);
+                        }
+
+                        $('.input-date').each(function () {
+                            var date = $(this).attr('value');
+
+                            if (date) {
+                                $(this).attr('value', moment.utc(date).format('YYYY-MM-DDTHH:mm'));
+                            } else {
+                                $(this).attr('value', moment().format('YYYY-MM-DDTHH:mm'));
+                            }
+
+                            $(this).attr('min', moment().format('YYYY-MM-DDTHH:mm'));
+                        });
+
+                        parent.find('[data-dismiss=modal]').trigger('click');
+                    }
+
+                    that.attr('disabled', false);
+                });
+            });
+
+            $('#destinations').on('click', '.delete-destination', function () {
+                var that = $(this).parent('div');
+
+                $.post('/plan/destination/delete', {tid: $('#trip_id').val(), id: that.attr('id')}, function (result) {
+                    if (result.success) {
+                        that.remove();
+                    }
+                });
+            });
+
+            $('#days').on('click', '.delete-attraction', function () {
+                var that = $(this).parent('div');
+
+                that.remove();
+            });
+
+
+            $('#days').on('click', '.up', function () {
+                var that = $(this).parents('#days .attraction');
+
+                var target = $($('#days .attraction')[$('#days .attraction').index(that) - 1]);
+
+                if (target.length && (that.parents('.day').data('day') == target.parents('.day').data('day'))) {
+                    var temp = target.clone();
+
+
+                    target.replaceWith(that[0].outerHTML);
+
+                    that.replaceWith(temp[0].outerHTML);
+                } else {
+                    var previousDay = $('[data-day=' + (that.parents('#days .day').data('day') - 1) + ']');
+
+                    if (previousDay.length) {
+                        previousDay.append(that.remove()[0].outerHTML);
+                    }
+                }
+
+            });
+
+            $('#days').on('click', '.down', function () {
+                var that = $(this).parents('#days .attraction');
+
+                var target = $($('#days .attraction')[$('#days .attraction').index(that) + 1]);
+
+                if (target.length && (that.parents('.day').data('day') == target.parents('.day').data('day'))) {
+                    var temp = target.clone();
+
+                    target.replaceWith(that[0].outerHTML);
+
+                    that.replaceWith(temp[0].outerHTML);
+                } else {
+                    var nextDay = $('[data-day=' + (that.parents('#days .day').data('day') + 1) + '] .day-number');
+
+                    if (nextDay.length) {
+                        nextDay.after(that.remove()[0].outerHTML);
+                    }
+                }
+            });
+
+            $('#destinations').on('click', '.move-right', function () {
+                var that = $(this).parent('div');
+                var id = that.attr('id');
+                var name = $('#' + id + '.destination').find('#name').val();
+
+                var template = $('.attraction.template').clone();
+                template.removeClass('template').removeClass('hidden');
+
+                template.attr('id', id);
+                template.find('.edit').text(name);
+
+
+                if ($('#days .attraction').length) {
+                    $('#days .attraction').last().after(template);
+                } else {
+                    $('.day').first().append(template);
+                }
+
+            });
+
+
+            $('#add_destination').click(function () {
+                $('#edit_body').html($('.destination.template').html());
+            });
+
+            $('#days, #destinations').on('click', '.edit', function () {
+                var that = $(this).parent('div');
+                var id = that.attr('id');
+
+                $('#edit_body').html($('#' + id + '.destination').html());
+            });
+
+            $('#add_day').click(function () {
+                var newDay = $('.day').last().data('day') + 1;
+                $('#days').append('<div class="day" style="border: 1px solid #ddd; min-height: 90px; padding: 10px;" data-day="' + newDay + '" class="day"><div class="day-number">第' + newDay + '天</div></div>')
+            });
+
+            $('#delete_day').click(function () {
+                var days = $('.day');
+
+                if (days.length > 1 && !days.last().find('.attraction').length) {
+                    days.last().remove();
+                }
+            });
+
+            $('#edit_destination').validate({
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 2
+                    },
+                    minutes: {
+                        required: true,
+                        digits: true
+                    },
+                    address: {
+                        required: true,
+                        minlength: 5
+                    },
+                    people: {
+                        required: true,
+                        digits: true
+                    }
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass('has-error');
+                },
+                errorElement: 'span',
+                errorClass: 'help-block',
+                errorPlacement: function (error, element) {
+
+                }
+            });
+        });
+
+

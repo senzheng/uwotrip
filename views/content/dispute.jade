@@ -1,0 +1,18 @@
+extends ../layouts/dashboard
+
+block dashboard
+    .row
+        .col-md-6.col-md-offset-3
+            .panel.panel-default
+                .panel-heading
+                    h3 行程争议
+                .panel-body
+                    p 告诉我们您的问题
+                    p 订单号码: #21231321
+                    p AAAA Trip
+                    form(action='')
+                        textarea.form-control(placeholder='请输入您的争议内容')
+                        br
+                        .pull-right
+                            input.btn.btn-primary(type='submit', value='发送')
+                            button.btn.btn-default(type='button') 返回
